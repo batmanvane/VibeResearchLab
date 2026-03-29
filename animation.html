@@ -657,7 +657,7 @@ class MindMap {
         if (arc.growT >= 1) {
           arc.grown = true;
           const nd = this.nodes[arc.toIdx];
-          this.triggerImpact(nd.x, nd.y, arc.catIdx, catColor(arc.catIdx), now);
+          this.triggerImpact(nd.x, nd.y, arc.catIdx, arc.color, now);
         }
       }
     }
@@ -670,13 +670,16 @@ class MindMap {
       if (tr.t > 1 || tr.t < 0) {
         const endNodeIdx = tr.t > 1 ? arc.toIdx : arc.fromIdx;
         const endNode = this.nodes[endNodeIdx];
-        if (Math.random() < this.model.impactProb) this.triggerImpact(endNode.x, endNode.y, tr.catIdx, catColor(tr.catIdx), now);
+        if (Math.random() < this.model.impactProb) this.triggerImpact(endNode.x, endNode.y, tr.catIdx, tr.color, now);
         const roll = Math.random();
         if (roll < 0.5) {
           const connected = this.arcs.map((a, idx) => ({ a, idx })).filter(({ a, idx }) => idx !== tr.arcIdx && a.grown && (a.fromIdx === endNodeIdx || a.toIdx === endNodeIdx));
           if (connected.length > 0) {
-            const next = connected[Math.floor(Math.random() * connected.length)];
+            const sameColor = connected.filter(c => c.a.color === tr.color);
+            const choices = sameColor.length > 0 ? sameColor : connected;
+            const next = choices[Math.floor(Math.random() * choices.length)];
             tr.arcIdx = next.idx;
+            tr.color = next.a.color;
             if (next.a.fromIdx === endNodeIdx) { tr.t = 0; tr.direction = 1; } else { tr.t = 1; tr.direction = -1; }
           } else { tr.direction *= -1; tr.t = Math.max(0, Math.min(1, tr.t)); }
         } else if (roll < 0.8) { tr.direction *= -1; tr.t = Math.max(0, Math.min(1, tr.t)); }
@@ -1212,11 +1215,11 @@ function drawUI(now) {
   }
 
   // Helper to draw a panel's progress bar
-  function drawPanelIndicator(cx, tracker, color, isRight) {
+  function drawPanelIndicator(cx, tracker, color, isRight, barOffsetY = 0) {
     const total = totalTrackerProgress(tracker);
-    const maxEvents = isRight ? 200 : 60;
-    const barY = 66;
-    const barW = 80;
+    const maxEvents = 350;
+    const barY = 66 + barOffsetY;
+    const barW = mobile ? 50 : 80;
     const barH = 3;
     const barX = cx - barW / 2;
     ctx.fillStyle = '#161b22';
@@ -1301,8 +1304,9 @@ function drawUI(now) {
       ctx.fillText('1 PI  +  3 PhDs  +  AI  ·  2 weeks', sectionCX, bottomY + 54);
       ctx.globalAlpha = 1;
 
-      drawPanelIndicator(sectionCX, trackerRight, G[3], true);
-      drawPhdLegend(sectionCX, bottomY + 95);
+      const barOffsetY = mobile ? bottomY : 0;
+      drawPanelIndicator(sectionCX, trackerRight, G[3], true, barOffsetY);
+      drawPhdLegend(sectionCX, bottomY + 95 + (mobile ? 0 : 0));
 
       // Tracker at bottom of bottom section
       const bottomTrackerBaseY = sectionH * 2 - 12 - trackerTotalH;
