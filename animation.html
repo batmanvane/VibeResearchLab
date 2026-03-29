@@ -6,8 +6,7 @@
 <title>Traditional Lab vs Augmented Lab</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0d1117; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; }
-  canvas { display: block; }
+  body { background: #0d1117; font-family: 'Helvetica Neue', Arial, sans-serif; overflow-y: auto; }
   #infoBtn {
     position: fixed;
     top: 16px;
@@ -21,7 +20,7 @@
     font-size: 20px;
     font-weight: 700;
     cursor: pointer;
-    z-index: 100;
+    z-index: 300;
     transition: all 0.2s ease;
     box-shadow: 0 0 8px rgba(57, 211, 83, 0.3);
   }
@@ -88,15 +87,16 @@
   .info-content td { color: #c9d1d9; }
   .info-content ul { padding-left: 20px; margin: 10px 0; }
   .info-content li { margin: 4px 0; }
-  .info-content a { color: #58a6ff; text-decoration: none; }
+  .info-content a { color: #58a6ff; text-decoration: none; font-weight: 600; }
   .info-content a:hover { text-decoration: underline; }
   .info-footer {
-    margin-top: 20px;
+    margin-top: 12px;
     padding-top: 10px;
     border-top: 1px solid #21262d;
     font-size: 11px;
     color: #8b949e;
   }
+  .info-footer a { color: #58a6ff; text-decoration: none; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -108,20 +108,11 @@
     <button id="closeInfo">&times;</button>
   </div>
   <div class="info-content">
-    <h3>Mathematical Model</h3>
-    <p>The simulation uses a empirically-grounded model. Output emerges from per-task speedups (not global multipliers), skill-biased effectiveness, and validation overhead.</p>
-    <p class="info-footer">See <a href="model-explanation.html" target="_blank">Mathematical Model →</a> and <a href="animation-guide.html" target="_blank">Animation Guide →</a></p>
+    <h3>The Model</h3>
+    <p>The simulation uses an empirically-grounded model. Output emerges from per-task speedups (not global multipliers), skill-biased effectiveness, and validation overhead.</p>
+    <p>See <a href="model-explanation.html" target="_blank">Mathematical Model →</a> and <a href="animation-concept.html" target="_blank">Animation Concept →</a></p>
 
-    <h3>Productivity Multiplier a Myth?</h3>
-    <p>Vendor studies claim 10x-55x speedup from AI. But independent research tells a different story:</p>
-    <table>
-      <tr><th>Study</th><th>Finding</th><th>Confidence</th></tr>
-      <tr><td>METR 2024</td><td><strong>0%</strong> speedup for experienced devs</td><td>HIGH</td></tr>
-      <tr><td><a href="https://arxiv.org/abs/2302.06590" target="_blank">Peng et al. 2023</a></td><td>55.8% faster on <em>simple</em> tasks only</td><td>HIGH</td></tr>
-      <tr><td>Noy & Zhang 2023</td><td>+40% for junior, <strong>~0%</strong> for skilled</td><td>HIGH</td></tr>
-    </table>
-
-    <h3>Per-Task Speedups (This Model)</h3>
+    <h3>Per-Task Speedups</h3>
     <table>
       <tr><th>Task</th><th>AI Speedup</th><th>Source</th></tr>
       <tr><td>Boilerplate code</td><td>1.55x</td><td>Peng et al. RCT: 55.8% on simple tasks</td></tr>
@@ -143,6 +134,18 @@
       <li><a href="https://arxiv.org/abs/2302.06590" target="_blank">Peng et al. 2023 (GitHub Copilot)</a> — 55.8% on simple tasks</li>
       <li><a href="https://www.science.org/doi/10.1126/science.adh2586" target="_blank">Noy & Zhang 2023 (Science)</a> — +40% for below-median writers</li>
     </ul>
+
+    <h3>The Animation</h3>
+    <p>The animation is a <strong>stochastic Petri net</strong>: nodes represent research states, events fire probabilistically, tokens carry confidence that increases as work is validated. See <a href="animation-concept.html" target="_blank">Animation Concept →</a> for full details.</p>
+
+    <h3>Productivity Multiplier a Myth?</h3>
+    <p>Vendor studies claim 10x-55x speedup from AI. But independent research tells a different story:</p>
+    <table>
+      <tr><th>Study</th><th>Finding</th><th>Confidence</th></tr>
+      <tr><td>METR 2024</td><td><strong>0%</strong> speedup for experienced devs</td><td>HIGH</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2302.06590" target="_blank">Peng et al. 2023</a></td><td>55.8% faster on <em>simple</em> tasks only</td><td>HIGH</td></tr>
+      <tr><td>Noy & Zhang 2023</td><td>+40% for junior, <strong>~0%</strong> for skilled</td><td>HIGH</td></tr>
+    </table>
   </div>
 </div>
 <script>
@@ -155,10 +158,12 @@ const ctx = canvas.getContext('2d');
 let dpr = 1;
 function resize() {
   dpr = window.devicePixelRatio || 1;
+  const mobile = (window.innerWidth < 768);
+  const h = mobile ? window.innerHeight * 2 : window.innerHeight;
   canvas.width = window.innerWidth * dpr;
-  canvas.height = window.innerHeight * dpr;
+  canvas.height = h * dpr;
   canvas.style.width = window.innerWidth + 'px';
-  canvas.style.height = window.innerHeight + 'px';
+  canvas.style.height = h + 'px';
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 resize();
@@ -226,13 +231,14 @@ function totalTrackerProgress(tracker) {
   return tracker.reduce((sum, row) => sum + row.wraps * TRACK_CELLS + row.idx, 0);
 }
 
-function drawTracker(tracker, cx, baseY) {
+function drawTracker(tracker, cx, baseY, mobile) {
   const cellSize = 8;
   const gap = 2;
   const rowGap = 3;
-  const labelW = 80;
-  const multW = 28; // reserved space for multiplier label on right
-  const totalCellW = TRACK_CELLS * (cellSize + gap);
+  const labelW = mobile ? 65 : 80;
+  const multW = 0;
+  const trackCells = mobile ? 18 : TRACK_CELLS;
+  const totalCellW = trackCells * (cellSize + gap);
   const totalW = labelW + totalCellW + multW;
   const startX = cx - totalW / 2;
 
@@ -242,7 +248,7 @@ function drawTracker(tracker, cx, baseY) {
     const y = baseY + r * (cellSize + rowGap);
 
     // Category label
-    ctx.font = '500 11px "Helvetica Neue", Arial, sans-serif';
+    ctx.font = `500 ${mobile ? 7 : 9}px "Helvetica Neue", Arial, sans-serif`;
     ctx.textAlign = 'right';
     ctx.fillStyle = cat.color;
     ctx.globalAlpha = 1.0;
@@ -250,7 +256,7 @@ function drawTracker(tracker, cx, baseY) {
 
     // Cells
     const cellStartX = startX + labelW;
-    for (let i = 0; i < TRACK_CELLS; i++) {
+    for (let i = 0; i < trackCells; i++) {
       const level = row.cells[i];
       if (level === 0) {
         ctx.fillStyle = '#161b22';
@@ -263,8 +269,8 @@ function drawTracker(tracker, cx, baseY) {
       ctx.fill();
     }
 
-    // Wrap multiplier on the right (always in reserved space)
-    if (row.wraps > 0) {
+    // Wrap multiplier on the right (desktop only)
+    if (!mobile && row.wraps > 0) {
       ctx.fillStyle = cat.color;
       ctx.globalAlpha = 0.9;
       ctx.font = '700 9px "Courier New", monospace';
@@ -529,6 +535,10 @@ class MindMap {
     this.impacts = [];
     this.spawnTimer = 0;
     this.travTimer = 0;
+    // Ring speed proportional to model's effective speedup (1.0 for traditional, ~1.35 for augmented)
+    this.ringSpeed = model.isAugmented ? 1.3 : 1.0;
+    this.spawnTimer = 0;
+    this.travTimer = 0;
   }
 
   spawnNode(now) {
@@ -776,8 +786,8 @@ function initMaps() {
   const w = W();
   const h = H();
   const qw = w / 4;
-  leftMap = new MindMap(qw, h * 0.42, modelTraditional, trackerLeft);
-  rightMap = new MindMap(qw * 3, h * 0.42, modelAugmented, trackerRight);
+  leftMap = new MindMap(w * 0.25, h * 0.22, modelTraditional, trackerLeft);
+  rightMap = new MindMap(w * 0.75, h * 0.22, modelAugmented, trackerRight);
 }
 initMaps();
 window.addEventListener('resize', () => { resize(); initMaps(); });
@@ -898,14 +908,15 @@ function drawPhDOrbit(core, now, orbitR, orbitSpeed, phdSize, auraSize) {
 
 function drawTraditionalTeam(now) {
   if (!leftMap) return;
-  drawPhDOrbit(leftMap.nodes[0], now, 18, 0.15, 3, 8);
+  drawPhDOrbit(leftMap.nodes[0], now, 18, 0.15 * leftMap.ringSpeed, 3, 8);
 }
 
 function drawAugmentedTeam(now) {
   if (!rightMap) return;
+  const rs = rightMap.ringSpeed;
   const core = rightMap.nodes[0];
   for (let i = 3; i >= 1; i--) {
-    const r = 12 + i * 10 + 3 * Math.sin(now * 1.2 + i);
+    const r = 12 + i * 10 + 3 * Math.sin(now * rs * 1.2 + i);
     const grad = ctx.createRadialGradient(core.x, core.y, 2, core.x, core.y, r);
     grad.addColorStop(0, G[3] + '18');
     grad.addColorStop(0.5, G[2] + '08');
@@ -915,11 +926,10 @@ function drawAugmentedTeam(now) {
   }
   const ringR = 22;
   const dashCount = 24;
-  const ringSpeed = now * 0.8;
   ctx.lineWidth = 1.2;
   for (let d = 0; d < dashCount; d++) {
-    const a1 = (d / dashCount) * Math.PI * 2 + ringSpeed;
-    const a2 = ((d + 0.4) / dashCount) * Math.PI * 2 + ringSpeed;
+    const a1 = (d / dashCount) * Math.PI * 2 + now * rs;
+    const a2 = ((d + 0.4) / dashCount) * Math.PI * 2 + now * rs;
     ctx.strokeStyle = G[3];
     ctx.globalAlpha = 0.25 + 0.2 * Math.sin(now * 3 + d * 0.5);
     ctx.beginPath(); ctx.arc(core.x, core.y, ringR, a1, a2); ctx.stroke();
@@ -931,16 +941,16 @@ function drawAugmentedTeam(now) {
   ctx.textAlign = 'center';
   ctx.fillText('AI', core.x, core.y + ringR + 12);
   ctx.globalAlpha = 1;
-  drawPhDOrbit(core, now, 32, 0.3, 3.5, 10);
+  drawPhDOrbit(core, now, 32, 0.3 * rs, 3.5, 10);
   for (let i = 0; i < 3; i++) {
-    const angle = phdAngles[i] + now * 0.3;
+    const angle = phdAngles[i] + now * 0.3 * rs;
     const px = core.x + Math.cos(angle) * 32;
     const py = core.y + Math.sin(angle) * 32;
-    const extLen = 15 + 8 * Math.sin(now * 2.5 + i * 2);
+    const extLen = 15 + 8 * Math.sin(now * rs * 2.5 + i * 2);
     const ex = core.x + Math.cos(angle) * (32 + extLen);
     const ey = core.y + Math.sin(angle) * (32 + extLen);
     ctx.strokeStyle = phdColors[i];
-    ctx.globalAlpha = 0.12 + 0.08 * Math.sin(now * 3 + i);
+    ctx.globalAlpha = 0.12 + 0.08 * Math.sin(now * rs * 3 + i);
     ctx.lineWidth = 0.6;
     ctx.setLineDash([3, 3]);
     ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.stroke();
@@ -1232,16 +1242,6 @@ function drawUI(now) {
       const sectionH = h / 2;
       const sectionCX = w / 2;
 
-      // Section divider
-      ctx.strokeStyle = BORDER;
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(0, sectionH);
-      ctx.lineTo(w, sectionH);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
       // --- TOP: Traditional Lab ---
       ctx.font = '600 14px "Helvetica Neue", Arial, sans-serif';
       ctx.textAlign = 'center';
@@ -1257,12 +1257,36 @@ function drawUI(now) {
       drawPanelIndicator(sectionCX, trackerLeft, WHITE, false);
       drawPhdLegend(sectionCX, 95);
 
+      // Output factor embedded in dashed divider line
+      if (textAlpha > 0.3) {
+        // Draw dashed line across full width at section boundary
+        ctx.strokeStyle = BORDER;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, sectionH);
+        ctx.lineTo(w, sectionH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Overlay: dashes + factor + label centered on the line
+        ctx.globalAlpha = 1;
+        ctx.font = '700 14px "Courier New", monospace';
+        ctx.fillStyle = outputRatio > 1.5 ? G[3] : WHITE;
+        ctx.fillText(`${outputRatio.toFixed(1)}x`, sectionCX, sectionH - 1);
+        ctx.font = '400 8px "Courier New", monospace';
+        ctx.fillStyle = BORDER;
+        ctx.globalAlpha = 0.8;
+        ctx.fillText('output factor', sectionCX, sectionH + 11);
+        ctx.globalAlpha = 1;
+      }
+
       // Tracker at bottom of top section
       const trackerRowH = 8 + 3;
       const trackerTotalH = trackCategories.length * trackerRowH;
-      const trackerBaseY = sectionH - 12 - trackerTotalH;
+      const trackerBaseY = sectionH - 30 - trackerTotalH;
       ctx.globalAlpha = textAlpha;
-      drawTracker(trackerLeft, sectionCX, trackerBaseY);
+      drawTracker(trackerLeft, sectionCX, trackerBaseY, true);
 
       // --- BOTTOM: Augmented Lab ---
       const bottomY = sectionH;
@@ -1280,24 +1304,10 @@ function drawUI(now) {
       drawPanelIndicator(sectionCX, trackerRight, G[3], true);
       drawPhdLegend(sectionCX, bottomY + 95);
 
-      // Output factor — center between sections
-      if (textAlpha > 0.3) {
-        ctx.globalAlpha = 1;
-        ctx.font = '700 20px "Courier New", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = outputRatio > 1.5 ? G[3] : WHITE;
-        ctx.fillText(`${outputRatio.toFixed(1)}x`, sectionCX, sectionH - 20);
-        ctx.font = '400 9px "Courier New", monospace';
-        ctx.fillStyle = WHITE;
-        ctx.globalAlpha = 0.7;
-        ctx.fillText('output factor', sectionCX, sectionH - 6);
-        ctx.globalAlpha = 1;
-      }
-
       // Tracker at bottom of bottom section
-      const bottomTrackerBaseY = h - 12 - trackerTotalH;
+      const bottomTrackerBaseY = sectionH * 2 - 12 - trackerTotalH;
       ctx.globalAlpha = textAlpha;
-      drawTracker(trackerRight, sectionCX, bottomTrackerBaseY);
+      drawTracker(trackerRight, sectionCX, bottomTrackerBaseY, true);
 
       // Credit line at very bottom
       if (textAlpha > 0.5) {
@@ -1305,7 +1315,7 @@ function drawUI(now) {
         ctx.font = '400 10px "Helvetica Neue", Arial, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillStyle = SUBTLE;
-        ctx.fillText('Built by Robert Flassig · March 2026', sectionCX, h - 4);
+        ctx.fillText('Built by Robert Flassig · March 2026', sectionCX, sectionH * 2 - 4);
       }
 
     } else {
@@ -1366,8 +1376,8 @@ function drawUI(now) {
       const trackerBaseY = h - 12 - trackerTotalH;
 
       ctx.globalAlpha = textAlpha;
-      drawTracker(trackerLeft, midX / 2, trackerBaseY);
-      drawTracker(trackerRight, midX + midX / 2, trackerBaseY);
+      drawTracker(trackerLeft, midX / 2, trackerBaseY, false);
+      drawTracker(trackerRight, midX + midX / 2, trackerBaseY, false);
 
       // Credit line at bottom
       if (textAlpha > 0.5) {
@@ -1422,61 +1432,42 @@ function animate() {
   // --- Draw LEFT side with zoom ---
   ctx.save();
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  if (isMobile()) {
-    ctx.beginPath();
-    ctx.rect(0, 0, W(), H() / 2 - 1);
-    ctx.clip();
-    const lcx = leftMap.nodes[0].x;
-    const lcy = leftMap.nodes[0].y;
-    ctx.translate(lcx, lcy);
-    ctx.scale(currentZoom, currentZoom);
-    ctx.translate(-lcx, -lcy);
-    drawTraditionalTeam(now);
-    leftMap.draw(now);
-  } else {
-    ctx.beginPath();
-    ctx.rect(0, 0, W() / 2 - 1, H());
-    ctx.clip();
-    const lcx = leftMap.nodes[0].x;
-    const lcy = leftMap.nodes[0].y;
-    ctx.translate(lcx, lcy);
-    ctx.scale(currentZoom, currentZoom);
-    ctx.translate(-lcx, -lcy);
-    drawTraditionalTeam(now);
-    leftMap.draw(now);
-  }
+  const w = W();
+  const h = H();
+  const mobile = isMobile();
+  const sectionCX = w / 2;
+  const topH = mobile ? h / 2 : h;
+  if (mobile) ctx.beginPath(), ctx.rect(0, 0, w, topH - 1), ctx.clip();
+  else ctx.beginPath(), ctx.rect(0, 0, w / 2 - 1, h), ctx.clip();
+  const lcx = leftMap.nodes[0].x;
+  const lcy = leftMap.nodes[0].y;
+  // Offset zoom center to section's horizontal center AND vertical center
+  const lOffX = mobile ? (sectionCX - lcx) : (w * 0.25 - lcx);
+  const lOffY = mobile ? 0 : (h / 2 - lcy);
+  ctx.translate(lcx + lOffX, lcy + lOffY);
+  ctx.scale(currentZoom, currentZoom);
+  ctx.translate(-lcx, -lcy);
+  drawTraditionalTeam(now);
+  leftMap.draw(now);
   ctx.restore();
 
   // --- Draw RIGHT side with zoom (proportional to output) ---
   ctx.save();
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  if (isMobile()) {
-    ctx.beginPath();
-    ctx.rect(0, H() / 2 + 1, W(), H() / 2 - 1);
-    ctx.clip();
-    const rightNodeRatio = rightMap.nodes.length / Math.max(leftMap.nodes.length, 1);
-    const rightZoomAdjust = Math.max(ZOOM_END, currentZoom / Math.max(1, rightNodeRatio * 0.3));
-    const rcx = rightMap.nodes[0].x;
-    const rcy = rightMap.nodes[0].y;
-    ctx.translate(rcx, rcy);
-    ctx.scale(rightZoomAdjust, rightZoomAdjust);
-    ctx.translate(-rcx, -rcy);
-    drawAugmentedTeam(now);
-    rightMap.draw(now);
-  } else {
-    ctx.beginPath();
-    ctx.rect(W() / 2 + 1, 0, W() / 2, H());
-    ctx.clip();
-    const rightNodeRatio = rightMap.nodes.length / Math.max(leftMap.nodes.length, 1);
-    const rightZoomAdjust = Math.max(ZOOM_END, currentZoom / Math.max(1, rightNodeRatio * 0.3));
-    const rcx = rightMap.nodes[0].x;
-    const rcy = rightMap.nodes[0].y;
-    ctx.translate(rcx, rcy);
-    ctx.scale(rightZoomAdjust, rightZoomAdjust);
-    ctx.translate(-rcx, -rcy);
-    drawAugmentedTeam(now);
-    rightMap.draw(now);
-  }
+  if (mobile) ctx.beginPath(), ctx.rect(0, topH + 1, w, topH - 1), ctx.clip();
+  else ctx.beginPath(), ctx.rect(w / 2 + 1, 0, w / 2, h), ctx.clip();
+  const rightNodeRatio = rightMap.nodes.length / Math.max(leftMap.nodes.length, 1);
+  const rightZoomAdjust = Math.max(ZOOM_END, currentZoom / Math.max(1, rightNodeRatio * 0.3));
+  const rcx = rightMap.nodes[0].x;
+  const rcy = rightMap.nodes[0].y;
+  // Offset zoom center to section's horizontal center AND vertical center on mobile
+  const rOffX = mobile ? (sectionCX - rcx) : (w * 0.75 - rcx);
+  const rOffY = mobile ? (topH + topH / 2 - rcy) : (h / 2 - rcy);
+  ctx.translate(rcx + rOffX, rcy + rOffY);
+  ctx.scale(rightZoomAdjust, rightZoomAdjust);
+  ctx.translate(-rcx, -rcy);
+  drawAugmentedTeam(now);
+  rightMap.draw(now);
   ctx.restore();
 
   // --- UI overlay (screen space, no zoom) ---

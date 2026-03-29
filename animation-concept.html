@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animation Concept: Traditional vs Augmented Lab</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d1117; color: #c9d1d9; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 14px; line-height: 1.6; padding: 40px; max-width: 900px; margin: 0 auto; }
+    h1 { color: #e6edf3; font-size: 24px; margin-bottom: 8px; border-bottom: 1px solid #30363d; padding-bottom: 16px; }
+    h2 { color: #e6edf3; font-size: 18px; margin: 32px 0 16px 0; border-left: 3px solid #39d353; padding-left: 12px; }
+    h3 { color: #8b949e; font-size: 14px; margin: 24px 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+    .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 32px; }
+    p { margin: 12px 0; }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .key-finding { background: #0e4429; border: 1px solid #26a641; border-radius: 6px; padding: 16px; margin: 20px 0; }
+    .key-finding h4 { color: #39d353; margin-bottom: 8px; }
+    .note { background: #1c2128; border-left: 3px solid #f0883e; padding: 12px 16px; margin: 16px 0; font-size: 13px; }
+
+    /* Node depictions */
+    .node-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      margin: 16px 0;
+    }
+    .node-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 200px;
+    }
+    .node-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .node-dot.white { background: #e6edf3; box-shadow: 0 0 6px #e6edf3; }
+    .node-dot.cyan   { background: #58a6ff; }
+    .node-dot.pink   { background: #f472b6; }
+    .node-dot.yellow { background: #facc15; }
+    .node-dot.green  { background: #39d353; }
+    .node-dot.purple { background: #bc8cff; }
+    .node-dot.orange { background: #d29922; }
+    .node-dot.red    { background: #f85149; }
+    .node-dot.transparent {
+      background: transparent;
+      border: 1px dashed #30363d;
+      box-shadow: none;
+    }
+    .node-dot.in-progress {
+      background: rgba(48, 54, 61, 0.5);
+      border: 1px dashed #8b949e;
+    }
+    .node-dot.dead-aura {
+      background: #f85149;
+      box-shadow: 0 0 10px rgba(248, 81, 73, 0.5);
+    }
+    .node-dot.dead-core {
+      width: 18px;
+      height: 18px;
+      background: #0d1117;
+      border: 1px solid #f85149;
+    }
+    .node-dot.pub-aura {
+      background: #39d353;
+      box-shadow: 0 0 12px rgba(57, 211, 83, 0.6);
+    }
+    .node-dot.pub-core {
+      width: 16px;
+      height: 16px;
+      background: #0d1117;
+      border: 2px solid #39d353;
+    }
+    .node-info { font-size: 12px; color: #8b949e; }
+    .node-info strong { color: #c9d1d9; display: block; margin-bottom: 2px; }
+
+    /* Tracker row depictions */
+    .tracker-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .tracker-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tracker-cells {
+      display: flex;
+      gap: 3px;
+    }
+    .tracker-cell {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      background: #161b22;
+    }
+    .tracker-cell.lit  { background: #39d353; }
+    .tracker-cell.pale  { background: rgba(57, 211, 83, 0.4); }
+    .tracker-cell.dark  { background: #0e4429; }
+    .tracker-cell.purple { background: #bc8cff; }
+    .tracker-cell.purple-pale { background: rgba(188, 140, 255, 0.4); }
+    .tracker-cell.purple-dark { background: #2a1a4e; }
+    .tracker-cell.blue   { background: #58a6ff; }
+    .tracker-cell.blue-pale { background: rgba(88, 166, 255, 0.4); }
+    .tracker-cell.blue-dark { background: #0c2d6b; }
+    .tracker-cell.orange { background: #d29922; }
+    .tracker-cell.orange-pale { background: rgba(210, 153, 34, 0.4); }
+    .tracker-cell.orange-dark { background: #3b2508; }
+    .tracker-cell.red    { background: #f85149; }
+    .tracker-cell.red-pale { background: rgba(248, 81, 73, 0.4); }
+    .tracker-cell.red-dark { background: #3d1214; }
+    .tracker-label {
+      font-size: 12px;
+      color: #c9d1d9;
+      min-width: 150px;
+    }
+    .tracker-intensity {
+      font-size: 11px;
+      color: #8b949e;
+      font-family: 'Courier New', monospace;
+    }
+
+    .modeling-box {
+      background: #1c2128;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 20px 0;
+    }
+    .modeling-box h4 {
+      color: #e6edf3;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .modeling-box p { margin: 8px 0; }
+  </style>
+</head>
+<body>
+
+<h1>Animation Concept</h1>
+<p class="subtitle">Understanding the stochastic Petri net model — and how to read the animation</p>
+
+<h2>1. What the Animation Shows</h2>
+
+<p>The animation simulates <strong>2 years of research activity</strong> comparing two labs:</p>
+
+<ul>
+  <li><strong>Left — Traditional Lab:</strong> 1 PI + 3 PhDs working without AI assistance over 2 years</li>
+  <li><strong>Right — Augmented Lab:</strong> The same team, now aided by AI tools — completing in ~2 weeks of simulated time</li>
+</ul>
+
+<p>The research activity is visualized as a growing network of nodes and connections. Each node represents a research element (idea, method, result, publication) and edges show how they build on each other. The networks grow at different rates — the Augmented Lab's network is denser and more connected because the model predicts higher productivity.</p>
+
+<p>Each simulation run is stochastic — events occur probabilistically, so the exact growth pattern varies between runs. The expected output factor converges to ~<strong>1.5x</strong> over time, not the 3-5x that vendors claim.</p>
+
+<h2>2. The Animation Concept Inspired by Petri Nets</h2>
+
+<div class="modeling-box" style="border-left-color:#58a6ff;">
+  <h4>Stochastic Petri Net</h4>
+  <p>A formalism for modeling distributed, concurrent processes with probabilistic outcomes:</p>
+  <ul>
+    <li><strong>Places (nodes)</strong> represent research states: derivation, numerical result, publication draft, consistency check, in-progress, dead end</li>
+    <li><strong>Transitions (events)</strong> fire probabilistically — creating new places, connecting edges, or marking a direction as failed</li>
+    <li><strong>Tokens</strong> carry a confidence value — initially low, increasing as a research direction is validated by subsequent work</li>
+    <li><strong>Marking (network state)</strong> changes continuously as events fire — the growing network is the live marking of the Petri net</li>
+  </ul>
+  <p>The Augmented Lab's model has different transition probabilities (faster boilerplate, faster writing, slower validation) — producing a different marking trajectory than the Traditional Lab. The ~1.5x output factor is the ratio of final markings after equivalent simulated time.</p>
+  <p>The stochastic nature is essential: a deterministic Petri net would always produce the same result, but real research is full of contingency. The simulation's variability mirrors this.</p>
+</div>
+
+<h2>3. Network Visualization</h2>
+
+<h3>3.1 Node Types</h3>
+
+<div class="node-grid">
+  <div class="node-item">
+    <div style="display:flex;align-items:center;gap:4px;">
+      <div class="node-dot white" style="width:36px;height:36px;box-shadow:0 0 10px rgba(230,237,243,0.6);"></div>
+    </div>
+    <div class="node-info"><strong>PI (white, large)</strong>Principal Investigator — the central hub. Every network grows outward from here.</div>
+  </div>
+  <div class="node-item">
+    <div style="display:flex;gap:4px;">
+      <div class="node-dot cyan" title="PhD 1"></div>
+      <div class="node-dot pink" title="PhD 2"></div>
+      <div class="node-dot yellow" title="PhD 3"></div>
+    </div>
+    <div class="node-info"><strong>PhD researchers</strong>Each has a unique color (cyan, pink, yellow). They spawn new research directions and connect to the PI.</div>
+  </div>
+  <div class="node-item">
+    <div style="display:flex;align-items:center;gap:4px;">
+      <div style="position:relative;display:flex;align-items:center;justify-content:center;width:36px;height:36px;">
+        <div class="node-dot pub-aura" style="position:absolute;width:36px;height:36px;border-radius:50%;"></div>
+        <div class="node-dot pub-core"></div>
+      </div>
+    </div>
+    <div class="node-info"><strong>Publication draft (green)</strong>High-value. A research direction completed and written up — rare in the simulation.</div>
+  </div>
+  <div class="node-item">
+    <div class="node-dot purple"></div>
+    <div class="node-info"><strong>Derivation (purple)</strong>Mathematical progress — proofs, derivations, theoretical work.</div>
+  </div>
+  <div class="node-item">
+    <div class="node-dot cyan" style="opacity:0.8;"></div>
+    <div class="node-info"><strong>Numerical result (blue)</strong>Computational or experimental results generated.</div>
+  </div>
+  <div class="node-item">
+    <div class="node-dot orange"></div>
+    <div class="node-info"><strong>Consistency check (orange)</strong>Validation, debugging, cross-checking — including hallucination checking overhead from AI.</div>
+  </div>
+  <div class="node-item">
+    <div style="display:flex;align-items:center;gap:4px;">
+      <div style="position:relative;display:flex;align-items:center;justify-content:center;width:36px;height:36px;">
+        <div class="node-dot dead-aura" style="position:absolute;width:36px;height:36px;border-radius:50%;"></div>
+        <div class="node-dot dead-core"></div>
+      </div>
+    </div>
+    <div class="node-info"><strong>Dead end (red)</strong>Abandoned or failed research direction — surrounded by a red aura.</div>
+  </div>
+  <div class="node-item">
+    <div class="node-dot in-progress"></div>
+    <div class="node-info"><strong>In progress (faded)</strong>Research direction still active — not yet resolved as success or failure.</div>
+  </div>
+</div>
+
+<h3>3.2 Node Intensity — What Is Being Modeled</h3>
+
+<div class="modeling-box">
+  <h4>Modeling: Why Nodes Have Different Intensities</h4>
+  <p>The intensity of a node — how bright or dark it appears — is not cosmetic. It models the <strong>confidence level</strong> of a research element.</p>
+  <p>Newly spawned nodes appear <strong>faint</strong> (low confidence). As work progresses and a node is validated by subsequent results (consistency checks, derivations building on it), its intensity increases — it becomes more "real" in the network. Highly connected nodes that have survived multiple checks are rendered with stronger glow.</p>
+  <p>This mirrors how real research works: early-stage ideas are uncertain and tentative, while results that have been checked and built upon carry more weight. The simulation models this explicitly — nodes are not born equal; they earn their confidence.</p>
+  <p>Dead-end nodes are rendered with a <strong>red aura</strong> because they represent a strong negative signal: the research direction was tried and found to fail. The aura marks them as rejected, even after the node is "settled."</p>
+</div>
+
+<h3>3.3 Edges</h3>
+
+<p>Lines connect nodes to show dependencies — a new derivation building on a previous result, a publication draft connecting multiple numerical results, and so on. Denser connections mean more cumulative research progress. Edges are rendered with low opacity so they don't obscure the nodes they connect.</p>
+
+<h3>3.4 Zoom Behavior</h3>
+
+<p>Both sides zoom out over time as the network grows. The Augmented Lab's network is larger, so it zooms out faster to keep everything visible. The relative zoom reflects the productivity gap — you can see the right side's network becoming visually busier faster.</p>
+
+<h2>3. Header Elements</h2>
+
+<h3>3.1 Lab Labels</h3>
+
+<p>Each panel is labeled: <strong>TRADITIONAL LAB</strong> and <strong>AUGMENTED LAB</strong>. Below each label:</p>
+<ul>
+  <li>Traditional: <em>1 PI + 3 PhDs · 2 years</em> — indicates the team composition and real-world timespan</li>
+  <li>Augmented: <em>1 PI + 3 PhDs + AI · 2 weeks</em> — same team with AI, compressed to weeks for visual alignment</li>
+</ul>
+
+<h3>3.2 Event Counter and Progress Bar</h3>
+
+<p>Below the lab labels, a small progress bar shows the cumulative number of events logged. The bar fills as events accumulate, giving a sense of ongoing activity in each lab. Each event is counted and displayed as <em>events: N</em> below the bar.</p>
+
+<h3>3.3 PhD Color Legend</h3>
+
+<p>A small inline legend shows the color coding for each of the three PhD researchers. Their nodes appear in their respective colors throughout the network.</p>
+
+<h2>4. Output Factor</h2>
+
+<p>The output factor is the ratio of events logged by the Augmented Lab vs. the Traditional Lab. It is displayed between the two panels (or between sections on mobile).</p>
+
+<ul>
+  <li>The number scales based on the current productivity ratio</li>
+  <li>It turns <strong style="color:#39d353">green</strong> only when the ratio exceeds <strong>1.5x</strong> — avoiding the false impression that small gains are significant</li>
+  <li>On mobile it is displayed larger for visibility in the stacked layout</li>
+</ul>
+
+<div class="key-finding">
+  <h4>Expected Value: ~1.5x</h4>
+  <p>The model predicts approximately 1.5x output factor — not 3-5x as vendors claim. This is grounded in published RCTs (Peng et al., Noy & Zhang) and independent studies (METR).</p>
+</div>
+
+<h2>5. Productivity Graph</h2>
+
+<p>The graph in the center plots the productivity ratio over simulated time:</p>
+
+<ul>
+  <li><strong>X-axis:</strong> Output ratio (1x to 3x)</li>
+  <li><strong>Y-axis:</strong> Simulated time (0 → 2 weeks for Augmented, 0 → 2 years for Traditional)</li>
+  <li><strong>Line:</strong> Tron-style glowing line that grows from bottom as time progresses — shows how the ratio evolves</li>
+  <li><strong>Glow dot:</strong> The leading edge of the line shows the current ratio at the current time</li>
+</ul>
+
+<p>On the left side of the graph, time is labeled in <em>years</em> (Traditional Lab). On the right side, it is labeled in <em>weeks</em> (Augmented Lab) — though they share the same vertical position, reflecting the different durations. The graph is removed on mobile.</p>
+
+<h2>6. Progress Tracker</h2>
+
+<p>At the bottom of each panel, the progress tracker shows categorized research activity as filled cells. Each cell represents a logged event — <strong>brighter cells indicate higher confidence</strong> (more evidence accumulated around that event), <strong>fainter cells indicate more recent or uncertain events</strong>. When a row's bar fills, it wraps and clears. The tracker rows:</p>
+
+<div class="tracker-grid">
+  <div class="tracker-row">
+    <div class="tracker-label" style="color:#39d353;">Publication draft</div>
+    <div class="tracker-cells">
+      <div class="tracker-cell lit"></div><div class="tracker-cell pale"></div><div class="tracker-cell dark"></div>
+      <div class="tracker-cell lit"></div><div class="tracker-cell dark"></div>
+      <div class="tracker-cell dark"></div><div class="tracker-cell dark"></div><div class="tracker-cell dark"></div>
+      <div class="tracker-cell lit"></div><div class="tracker-cell pale"></div><div class="tracker-cell dark"></div>
+    </div>
+    <div class="tracker-intensity">highest value · rarest events</div>
+  </div>
+  <div class="tracker-row">
+    <div class="tracker-label" style="color:#bc8cff;">Derivation</div>
+    <div class="tracker-cells">
+      <div class="tracker-cell purple"></div><div class="tracker-cell purple-pale"></div><div class="tracker-cell purple-dark"></div>
+      <div class="tracker-cell purple"></div><div class="tracker-cell purple"></div><div class="tracker-cell purple-dark"></div>
+      <div class="tracker-cell purple-dark"></div><div class="tracker-cell purple-pale"></div>
+      <div class="tracker-cell purple"></div><div class="tracker-cell purple-dark"></div><div class="tracker-cell purple"></div>
+    </div>
+    <div class="tracker-intensity">mathematical progress · proofs</div>
+  </div>
+  <div class="tracker-row">
+    <div class="tracker-label" style="color:#58a6ff;">Numerical result</div>
+    <div class="tracker-cells">
+      <div class="tracker-cell blue"></div><div class="tracker-cell blue"></div><div class="tracker-cell blue-dark"></div>
+      <div class="tracker-cell blue-pale"></div><div class="tracker-cell blue"></div><div class="tracker-cell blue"></div>
+      <div class="tracker-cell blue-dark"></div><div class="tracker-cell blue-pale"></div>
+      <div class="tracker-cell blue"></div><div class="tracker-cell blue-dark"></div><div class="tracker-cell blue"></div>
+    </div>
+    <div class="tracker-intensity">computational / experimental results</div>
+  </div>
+  <div class="tracker-row">
+    <div class="tracker-label" style="color:#d29922;">Consistency check</div>
+    <div class="tracker-cells">
+      <div class="tracker-cell orange"></div><div class="tracker-cell orange-dark"></div><div class="tracker-cell orange-pale"></div>
+      <div class="tracker-cell orange"></div><div class="tracker-cell orange-dark"></div>
+      <div class="tracker-cell orange-pale"></div><div class="tracker-cell orange-dark"></div><div class="tracker-cell orange-pale"></div>
+      <div class="tracker-cell orange"></div><div class="tracker-cell orange-dark"></div><div class="tracker-cell orange-pale"></div>
+    </div>
+    <div class="tracker-intensity">validation · debugging · hallucination checks</div>
+  </div>
+  <div class="tracker-row">
+    <div class="tracker-label" style="color:#f85149;">Dead end</div>
+    <div class="tracker-cells">
+      <div class="tracker-cell red"></div><div class="tracker-cell red-dark"></div><div class="tracker-cell red-pale"></div>
+      <div class="tracker-cell red"></div><div class="tracker-cell red-dark"></div>
+      <div class="tracker-cell red-pale"></div><div class="tracker-cell red-dark"></div><div class="tracker-cell red-pale"></div>
+      <div class="tracker-cell red"></div><div class="tracker-cell red-dark"></div><div class="tracker-cell red-pale"></div>
+    </div>
+    <div class="tracker-intensity">abandoned · ~33% of directions (OSC 2015)</div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>Modeling — Cell Intensities:</strong> Bright cells in any row represent well-established events (high confidence, built upon by subsequent work). Faint cells are recent or tentative. Dark cells represent events that occurred early in the timeline or have been superseded. The <strong>orange row (consistency check)</strong> tends to accumulate faster in the Augmented Lab because AI hallucination checking adds overhead. The <strong>red row (dead end)</strong> may show slightly more activity in the Augmented Lab due to AI-generated incorrect results that must be caught and discarded.
+</div>
+
+<h2>7. Related Pages</h2>
+
+<ul>
+  <li><a href="model-explanation.html">Mathematical Model →</a> — Full equations, derivations, and data sources</li>
+  <li><a href="animation.html">Animation →</a> — The interactive simulation itself</li>
+</ul>
+
+</body>
+</html>

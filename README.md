@@ -26,7 +26,7 @@ The model predicts approximately **1.5x** productivity gain from AI augmentation
 ## Files
 
 - `animation.html` — Interactive visualization
-- `animation-guide.html` — Guide explaining what the animation shows and how to read it
+- `animation-concept.html` — Concept and guide explaining what the animation shows and how to read it
 - `model-explanation.html` — Mathematical model with LaTeX equations
 - `linkedin-post.md` — Source LinkedIn post
 
