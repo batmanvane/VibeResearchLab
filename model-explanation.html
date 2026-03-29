@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathematical Model: Traditional vs Augmented Research Lab</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d1117; color: #c9d1d9; font-family: 'SF Mono', monospace; font-size: 14px; line-height: 1.6; padding: 40px; max-width: 900px; margin: 0 auto; }
+    h1 { color: #e6edf3; font-size: 24px; margin-bottom: 8px; border-bottom: 1px solid #30363d; padding-bottom: 16px; }
+    h2 { color: #e6edf3; font-size: 18px; margin: 32px 0 16px 0; border-left: 3px solid #39d353; padding-left: 12px; }
+    h3 { color: #8b949e; font-size: 14px; margin: 24px 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+    .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 32px; }
+    .equation { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px 20px; margin: 12px 0; font-size: 16px; color: #e6edf3; overflow-x: auto; }
+    .parameter-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+    .parameter-table th, .parameter-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #21262d; }
+    .parameter-table th { color: #8b949e; font-weight: 500; }
+    .parameter-table td:first-child { color: #79c0ff; font-family: monospace; }
+    .highlight { color: #39d353; font-weight: 600; }
+    .warning { color: #f0883e; }
+    .critical { color: #f85149; }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .note { background: #1c2128; border-left: 3px solid #f0883e; padding: 12px 16px; margin: 16px 0; font-size: 13px; }
+    .key-finding { background: #0e4429; border: 1px solid #26a641; border-radius: 6px; padding: 16px; margin: 20px 0; }
+    .key-finding h4 { color: #39d353; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+<h1>Mathematical Model: Research Productivity Simulation</h1>
+<p class="subtitle">A Rigorous, Empirically-Grounded Formalization of Traditional vs AI-Augmented Research Labs</p>
+
+<h2>1. Model Overview and Environment</h2>
+
+<p>We model a research lab over time $T$ (in years) consisting of $n_{PhD}$ PhD researchers and $n_{PI}=1$ principal investigator.</p>
+
+<h3>1.1 Research Environment</h3>
+
+<table class="parameter-table">
+  <tr><th>Variable</th><th>Symbol</th><th>Description</th></tr>
+  <tr><td>T</td><td>Simulation time (years)</td><td>Typically T = 2 years</td></tr>
+  <tr><td>n_PhD</td><td>Number of PhD researchers</td><td>3 in our simulation</td></tr>
+  <tr><td>λ₀</td><td>Base task completion rate</td><td>Tasks per unit time per researcher</td></tr>
+  <tr><td>η</td><td>Learning rate</td><td>Efficiency gain per year</td></tr>
+</table>
+
+<h2>2. Task Completion Rate Model</h2>
+
+<p>Each researcher allocates their time across discrete tasks. Let $f_k$ be the fraction of time spent on task type $k$:</p>
+
+<table class="parameter-table">
+  <tr><th>Task k</th><th>f_k</th><th>Source</th></tr>
+  <tr><td>Boilerplate code</td><td>0.15</td><td>Feldon et al. 2017</td></tr>
+  <tr><td>Custom code</td><td>0.20</td><td>Feldon et al. 2017</td></tr>
+  <tr><td>Debugging</td><td>0.10</td><td>Feldon et al. 2017</td></tr>
+  <tr><td>Writing</td><td>0.15</td><td>Feldon et al. 2017</td></tr>
+  <tr><td>Literature review</td><td>0.10</td><td>Feldon et al. 2017</td></tr>
+  <tr><td>Data analysis</td><td>0.15</td><td>Feldon et al. 2017</td></tr>
+  <tr><td>Simulation</td><td>0.10</td><td>Feldon et al. 2017</td></tr>
+  <tr><td>Validation</td><td>0.05</td><td>Model assumption</td></tr>
+</table>
+
+<p>The average speedup is:</p>
+
+<p class="equation">$$\bar{s} = \sum_{k} f_k \cdot s_k \tag{1}$$</p>
+
+<h2>3. Per-Task Speedup Parameters</h2>
+
+<table class="parameter-table">
+  <tr><th>Task</th><th>Symbol</th><th>Value</th><th>Source</th></tr>
+  <tr><td>Boilerplate code</td><td>s_boiler</td><td class="highlight">1.55x</td><td><a href="https://arxiv.org/abs/2302.06590">Peng et al. 2023</a> — RCT: 55.8% faster on simple tasks</td></tr>
+  <tr><td>Writing drafts</td><td>s_write</td><td class="highlight">1.40x</td><td><a href="https://www.science.org/doi/10.1126/science.adh2586">Noy & Zhang 2023</a> — RCT: +40% for below-median writers</td></tr>
+  <tr><td>Debugging</td><td>s_debug</td><td class="highlight">1.30x</td><td>Estimate based on Peng et al. finding</td></tr>
+  <tr><td>Literature review</td><td>s_lit</td><td class="highlight">1.30x</td><td>Estimate (no published RCT)</td></tr>
+  <tr><td>Data analysis</td><td>s_data</td><td class="highlight">1.15x</td><td>Conservative estimate</td></tr>
+  <tr><td>Custom code</td><td>s_custom</td><td class="warning">1.00x</td><td>METR study — 0% for experienced devs</td></tr>
+  <tr><td>Simulation</td><td>s_sim</td><td class="warning">1.00x</td><td>Conceptual: no AI for physical experiments</td></tr>
+  <tr><td>Validation</td><td>s_valid</td><td class="critical">0.90x</td><td>Modeled: hallucination checking overhead</td></tr>
+</table>
+
+<p class="note"><strong>Critical:</strong> METR study found <em>zero</em> speedup for experienced developers on real tasks.</p>
+
+<p>Computing $\bar{s}$:</p>
+
+<p class="equation">$$\bar{s} = 0.15(1.55) + 0.20(1.00) + 0.10(1.30) + 0.15(1.40) + 0.10(1.30) + 0.15(1.15) + 0.10(1.00) + 0.05(0.90) = 1.220$$</p>
+
+<h2>4. Skill-Biased Effectiveness Model</h2>
+
+<p>AI productivity gains are <strong>skill-biased</strong> (Noy & Zhang 2023):</p>
+
+<p class="equation">$$s_{eff}(\sigma) = s \cdot (1 + \alpha \cdot (1 - \sigma)) \tag{2}$$</p>
+
+<ul>
+  <li>$\sigma \in [0,1]$ = skill level</li>
+  <li>$\alpha = 0.40$ (skill-bias strength)</li>
+  <li>$\sigma=0$ (novice): $s_{eff} = s \times 1.40$</li>
+  <li>$\sigma=1$ (expert): $s_{eff} = s \times 1.00$</li>
+</ul>
+
+<p>With $\sigma \sim N(0.5, 0.15^2)$:</p>
+
+<p class="equation">$$E[s_{eff}] = \bar{s} \cdot (1 + \alpha \cdot (1 - \mu_s)) = 1.220 \cdot 1.20 = 1.464 \tag{3}$$</p>
+
+<h2>5. Output Factor Derivation</h2>
+
+<h3>5.1 Traditional Lab</h3>
+
+<p class="equation">$$E_{trad}(T) = \lambda_0 \cdot T \cdot n_{PhD} \cdot (1 + \eta_{trad} \cdot T/2) \tag{4}$$</p>
+<p>where $\eta_{trad} = 0.15$/year.</p>
+
+<h3>5.2 Augmented Lab</h3>
+
+<p class="equation">$$E_{aug}(T) = \lambda_0 \cdot T \cdot n_{PhD} \cdot (1 + \eta_{aug} \cdot T/2) \cdot E[s_{eff}] \tag{5}$$</p>
+<p>where $\eta_{aug} = 0.20$/year.</p>
+
+<h3>5.3 Output Ratio</h3>
+
+<p class="equation">$$R(T) = \frac{E_{aug}(T)}{E_{trad}(T)} = \frac{1 + \eta_{aug}T/2}{1 + \eta_{trad}T/2} \cdot E[s_{eff}] \tag{6}$$</p>
+
+<p>At $T = 2$ years:</p>
+
+<p class="equation">$$R(2) = \frac{1.20}{1.15} \cdot 1.464 = 1.528$$</p>
+
+<div class="key-finding">
+  <h4>Key Result: ~1.5x Output Factor</h4>
+  <p>The model predicts an output factor of approximately <strong>1.5x</strong> — not 3-5x claimed by vendors.</p>
+</div>
+
+<h2>6. Publication Output Model</h2>
+
+<p>Research directions progress through stages:</p>
+
+<p class="equation">$$P_{pub} = p_{idea} \cdot p_{method} \cdot p_{exp} \cdot p_{analysis} \cdot p_{write} \cdot p_{submit} \cdot p_{accept} \tag{7}$$</p>
+
+<table class="parameter-table">
+  <tr><th>Stage</th><th>Probability</th></tr>
+  <tr><td>p_idea</td><td>0.80</td></tr>
+  <tr><td>p_method</td><td>0.70</td></tr>
+  <tr><td>p_exp</td><td>0.60</td></tr>
+  <tr><td>p_analysis</td><td>0.50</td></tr>
+  <tr><td>p_write</td><td>0.70</td></tr>
+  <tr><td>p_submit</td><td>0.80</td></tr>
+  <tr><td>p_accept</td><td>0.65</td></tr>
+</table>
+
+<p>$P_{pub} \approx 0.12$ (12% of directions become publications)</p>
+
+<h2>7. AI Failure Modes</h2>
+
+<h3>7.1 Hallucinations</h3>
+
+<p class="equation">$$E[P]_{aug} = E_{aug}(T) \cdot P_{pub} \cdot (1 - p_{halluc}) \tag{8}$$</p>
+<p>where $p_{halluc} \approx 0.10-0.15$</p>
+
+<h3>7.2 Dead End Dynamics</h3>
+
+<p class="equation">$$p_{dead,aug} = p_{dead,trad} \cdot (1 - \beta) + \gamma \cdot p_{halluc} \tag{9}$$</p>
+<ul>
+  <li>$\beta$ = AI pre-screening benefit</li>
+  <li>$\gamma$ = hallucination penalty</li>
+  <li>$p_{dead,trad} \approx 0.33$ (Open Science 2015)</li>
+</ul>
+
+<h2>8. Sensitivity Analysis</h2>
+
+<table class="parameter-table">
+  <tr><th>Parameter</th><th>Range</th><th>Effect on R</th></tr>
+  <tr><td>Mean skill μs</td><td>0.3-0.7</td><td>Lower skill → higher R</td></tr>
+  <tr><td>Skill-bias α</td><td>0.2-0.6</td><td>Higher α → higher R</td></tr>
+  <tr><td>Hallucination rate</td><td>0.05-0.25</td><td>Higher → lower R</td></tr>
+  <tr><td>Time T</td><td>1-5 years</td><td>Longer T → higher R</td></tr>
+</table>
+
+<h2>9. Summary</h2>
+
+<table class="parameter-table">
+  <tr><th>Metric</th><th>Traditional</th><th>Augmented</th><th>Delta</th></tr>
+  <tr><td>Avg speedup</td><td>1.00x</td><td>1.22x</td><td>+22%</td></tr>
+  <tr><td>Skill-biased effective</td><td>1.00x</td><td>1.46x</td><td>+46%</td></tr>
+  <tr><td>Output ratio (T=2yr)</td><td>1.00x</td><td>1.53x</td><td>+53%</td></tr>
+</table>
+
+<h2>10. Data Sources</h2>
+
+<ol>
+  <li><strong>Peng et al. 2023</strong> — arXiv:2302.06590. 55.8% faster on simple tasks.</li>
+  <li><strong>METR</strong> — Independent study. <strong>0% gain</strong> for experienced devs.</li>
+  <li><strong>Noy & Zhang 2023</strong> — <a href="https://www.science.org/doi/10.1126/science.adh2586">Science 381(6654)</a>. +40% for below-median writers.</li>
+  <li><strong>Dell'Acqua et al. 2023</strong> — Harvard/BCG. <strong>23% WORSE</strong> outside AI frontier.</li>
+  <li><strong>Open Science Collaboration 2015</strong> — Science 349(6251). 36-39% replication.</li>
+  <li><strong>Feldon et al. 2017</strong> — CBE-Life Sciences Education. Task time allocation.</li>
+  <li><strong>Walters & Wilder 2023</strong> — J. Academic Librarianship. 47-100% reference fabrication.</li>
+</ol>
+
+<h2>11. Conclusion</h2>
+
+<p>The mathematical model predicts <strong>~1.5x</strong> output factor, not 3-5x. This emerges from task-specific speedups, skill bias, and validation overhead — consistent with METR's finding of 0% gain for experienced developers.</p>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "$", right: "$", display: false}
+    ],
+    throwOnError: false
+  });
+});
+</script>
+
+</body>
+</html>

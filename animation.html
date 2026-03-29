@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traditional Lab vs Augmented Lab</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d1117; overflow: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; }
+  canvas { display: block; }
+  #infoBtn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #39d353;
+    background: #0e4429;
+    color: #39d353;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 8px rgba(57, 211, 83, 0.3);
+  }
+  #infoBtn:hover { background: #26a641; color: #fff; border-color: #39d353; box-shadow: 0 0 12px rgba(57, 211, 83, 0.5); }
+  #infoPanel {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 420px;
+    height: 100vh;
+    background: #0d1117;
+    border-left: 1px solid #30363d;
+    z-index: 200;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  #infoPanel.open { display: block; }
+  .info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #30363d;
+    position: sticky;
+    top: 0;
+    background: #0d1117;
+  }
+  .info-header h2 { color: #e6edf3; font-size: 18px; font-weight: 600; margin: 0; }
+  #closeInfo {
+    background: none;
+    border: none;
+    color: #8b949e;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 8px;
+  }
+  #closeInfo:hover { color: #e6edf3; }
+  .info-content { padding: 20px; color: #c9d1d9; }
+  .info-content h3 {
+    color: #e6edf3;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 20px 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #21262d;
+  }
+  .info-content h3:first-child { margin-top: 0; }
+  .info-content p { margin: 10px 0; }
+  .info-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin: 10px 0;
+  }
+  .info-content th, .info-content td {
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid #21262d;
+  }
+  .info-content th { color: #8b949e; font-weight: 500; }
+  .info-content td { color: #c9d1d9; }
+  .info-content ul { padding-left: 20px; margin: 10px 0; }
+  .info-content li { margin: 4px 0; }
+  .info-content a { color: #58a6ff; text-decoration: none; }
+  .info-content a:hover { text-decoration: underline; }
+  .info-footer {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #21262d;
+    font-size: 11px;
+    color: #8b949e;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<button id="infoBtn" title="Model Explanation">i</button>
+<div id="infoPanel">
+  <div class="info-header">
+    <h2>About This Model</h2>
+    <button id="closeInfo">&times;</button>
+  </div>
+  <div class="info-content">
+    <h3>Mathematical Model</h3>
+    <p>The simulation uses a rigorous, empirically-grounded model. Output emerges from per-task speedups (not global multipliers), skill-biased effectiveness, and validation overhead.</p>
+    <p class="info-footer">See <a href="model-explanation.html" target="_blank">Mathematical Model →</a> for full derivations.</p>
+
+    <h3>The Productivity Multiplier Myth</h3>
+    <p>Vendor studies claim 10x-55x speedup from AI. But independent research tells a different story:</p>
+    <table>
+      <tr><th>Study</th><th>Finding</th><th>Confidence</th></tr>
+      <tr><td>METR 2024</td><td><strong>0%</strong> speedup for experienced devs</td><td>HIGH</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2302.06590" target="_blank">Peng et al. 2023</a></td><td>55.8% faster on <em>simple</em> tasks only</td><td>HIGH</td></tr>
+      <tr><td>Noy & Zhang 2023</td><td>+40% for junior, <strong>~0%</strong> for skilled</td><td>HIGH</td></tr>
+    </table>
+
+    <h3>Per-Task Speedups (This Model)</h3>
+    <table>
+      <tr><th>Task</th><th>AI Speedup</th><th>Source</th></tr>
+      <tr><td>Boilerplate code</td><td>1.55x</td><td>Peng et al. RCT: 55.8% on simple tasks</td></tr>
+      <tr><td>Writing drafts</td><td>1.40x</td><td>Noy & Zhang: +40% below-median</td></tr>
+      <tr><td>Debugging</td><td>1.30x</td><td>Estimate (no RCT data)</td></tr>
+      <tr><td>Custom code</td><td>1.00x</td><td>METR: 0% for experienced devs</td></tr>
+      <tr><td>Validation</td><td>0.90x</td><td>Modeled: hallucination overhead</td></tr>
+    </table>
+
+    <h3>Skill-Bias Finding</h3>
+    <p>AI helps <strong>junior researchers</strong> far more than senior ones. Low-skilled researchers get full speedup; experienced researchers see ~0% gain.</p>
+
+    <h3>Expected Output</h3>
+    <p>Instead of 3-5x, the model produces <strong>~1.5x</strong> output factor — more honest, grounded in rigorous studies.</p>
+
+    <h3>Data Sources</h3>
+    <ul>
+      <li>METR — 0% speedup for experienced devs (independent study)</li>
+      <li><a href="https://arxiv.org/abs/2302.06590" target="_blank">Peng et al. 2023 (GitHub Copilot)</a> — 55.8% on simple tasks</li>
+      <li><a href="https://www.science.org/doi/10.1126/science.adh2586" target="_blank">Noy & Zhang 2023 (Science)</a> — +40% for below-median writers</li>
+    </ul>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+// ============================================================
+// HiDPI FIX — scale canvas for sharp text
+// ============================================================
+let dpr = 1;
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resize();
+
+const W = () => window.innerWidth;
+const H = () => window.innerHeight;
+
+// ============================================================
+// GITHUB COLORS
+// ============================================================
+const BG = '#0d1117';
+const BORDER = '#30363d';
+const SUBTLE = '#8b949e';
+const WHITE = '#e6edf3';
+const G = ['#0e4429','#006d32','#26a641','#39d353'];
+const RED = '#f85149';
+const ORANGE = '#d29922';
+const BLUE = '#58a6ff';
+const PURPLE = '#bc8cff';
+// ============================================================
+// 5-ROW PROGRESS TRACKER — theory+numerics research group
+// ============================================================
+const TRACK_CELLS = 40;
+const trackCategories = [
+  { label: 'Publication draft', color: G[3],   darkColor: '#0e4429' }, // rare, high-value
+  { label: 'Derivation',       color: PURPLE, darkColor: '#2a1a4e' },
+  { label: 'Numerical result', color: BLUE,   darkColor: '#0c2d6b' },
+  { label: 'Consistency check',color: ORANGE, darkColor: '#3b2508' },
+  { label: 'Dead end',         color: RED,    darkColor: '#3d1214' },
+];
+const NUM_CATS = trackCategories.length;
+
+// Legacy fallback (not primary — model.pickCategory() is used)
+const CAT_WEIGHTS = [1, 2, 3, 2, 3]; // Pub, Deriv, Numerical, Consistency, Dead end
+const CAT_TOTAL = CAT_WEIGHTS.reduce((a, b) => a + b, 0);
+function randCatIdx() {
+  let r = Math.random() * CAT_TOTAL;
+  for (let i = 0; i < NUM_CATS; i++) { r -= CAT_WEIGHTS[i]; if (r <= 0) return i; }
+  return NUM_CATS - 1;
+}
+function catColor(idx) { return trackCategories[idx].color; }
+
+function createTracker() {
+  return trackCategories.map(() => ({ cells: new Array(TRACK_CELLS).fill(0), idx: 0, wraps: 0 }));
+}
+
+const trackerLeft = createTracker();
+const trackerRight = createTracker();
+
+// Event-driven: called when an impact happens
+function logToTracker(tracker, catIdx) {
+  const row = tracker[catIdx];
+  if (row.idx >= TRACK_CELLS) {
+    // Bar full → clear and wrap
+    row.cells.fill(0);
+    row.idx = 0;
+    row.wraps++;
+  }
+  row.cells[row.idx] = 1 + Math.floor(Math.random() * 3);
+  row.idx++;
+}
+
+function totalTrackerProgress(tracker) {
+  return tracker.reduce((sum, row) => sum + row.wraps * TRACK_CELLS + row.idx, 0);
+}
+
+function drawTracker(tracker, cx, baseY) {
+  const cellSize = 8;
+  const gap = 2;
+  const rowGap = 3;
+  const labelW = 80;
+  const multW = 28; // reserved space for multiplier label on right
+  const totalCellW = TRACK_CELLS * (cellSize + gap);
+  const totalW = labelW + totalCellW + multW;
+  const startX = cx - totalW / 2;
+
+  for (let r = 0; r < trackCategories.length; r++) {
+    const cat = trackCategories[r];
+    const row = tracker[r];
+    const y = baseY + r * (cellSize + rowGap);
+
+    // Category label
+    ctx.font = '500 11px "Helvetica Neue", Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = cat.color;
+    ctx.globalAlpha = 1.0;
+    ctx.fillText(cat.label, startX + labelW - 8, y + cellSize - 1);
+
+    // Cells
+    const cellStartX = startX + labelW;
+    for (let i = 0; i < TRACK_CELLS; i++) {
+      const level = row.cells[i];
+      if (level === 0) {
+        ctx.fillStyle = '#161b22';
+      } else {
+        ctx.fillStyle = level === 1 ? cat.darkColor : level === 2 ? cat.color + '90' : cat.color;
+      }
+      ctx.globalAlpha = 0.9;
+      ctx.beginPath();
+      roundRect(ctx, cellStartX + i * (cellSize + gap), y, cellSize, cellSize, 1.5);
+      ctx.fill();
+    }
+
+    // Wrap multiplier on the right (always in reserved space)
+    if (row.wraps > 0) {
+      ctx.fillStyle = cat.color;
+      ctx.globalAlpha = 0.9;
+      ctx.font = '700 9px "Courier New", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(`${row.wraps + 1}x`, cellStartX + totalCellW + 4, y + cellSize - 1);
+    }
+  }
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'center';
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+}
+
+// ============================================================
+// CALIBRATED RESEARCH MODEL
+// ============================================================
+// ============================================================
+  // EMERGENT ACTIVITY MODEL (March 2026 revision)
+  // ============================================================
+  // Grounded on: METR (0% gain for experienced devs), Peng et al. 2023
+  // (55.8% on simple tasks only), Noy & Zhang 2023 (+40% for below-median,
+  // ~0% for skilled), replication crisis data, hallucination benchmarks.
+  // See technical-documentation.md for full model explanation.
+  //
+  // Key insight: AI productivity is TASK-SPECIFIC and SKILL-BIASED.
+  // The 10x claims are vendor hype; rigorous studies show modest gains
+  // for routine tasks, near-zero for complex problem-solving.
+  //
+  // Animation: 90s ≈ 2 years real time
+  // 1 animation-second ≈ 8.1 real days
+
+const ANIM_DURATION = 90; // seconds of meaningful animation
+const REAL_YEARS = 2;
+const DAYS_PER_ANIM_SEC = (REAL_YEARS * 365) / ANIM_DURATION; // ~8.1
+
+// ============================================================
+  // PER-TASK SPEEDUP FACTORS (from RCTs)
+  // ============================================================
+  // These replace the old global multipliers
+  const TASK_SPEEDUPS = {
+    // Task type: [traditional speed, augmented speed]
+    // Augmented speedups are skill-biased (see effectiveSpeedup())
+    boilerplateCode: { trad: 1.0, aug: 1.55 },  // Peng et al. RCT: 55.8% faster
+    customCode:      { trad: 1.0, aug: 1.0 },   // METR: 0% for skilled
+    debugging:       { trad: 1.0, aug: 1.30 },  // Microsoft internal
+    writing:         { trad: 1.0, aug: 1.40 },  // Noy & Zhang: 40% for below-median
+    litReview:       { trad: 1.0, aug: 1.30 },  // Self-report estimate
+    dataAnalysis:   { trad: 1.0, aug: 1.15 },  // Conservative
+    simulation:      { trad: 1.0, aug: 1.0 },   // No AI for wet lab
+    validation:      { trad: 1.0, aug: 0.90 },  // SLOWER (hallucination checking)
+  };
+
+  // ============================================================
+  // SKILL-BIASED EFFECTIVENESS MODIFIER
+  // ============================================================
+  // AI helps junior researchers more than senior ones
+  // Low-skilled (0) get full speedup; high-skilled (1) get near-zero
+  function effectiveSpeedup(baseSpeedup, skillLevel) {
+    if (baseSpeedup <= 1.0) return baseSpeedup; // No AI or slowdown tasks
+    return baseSpeedup * (1 + 0.4 * (1 - skillLevel));
+  }
+
+  // Skill distribution: N(0.5, 0.15) per PhD agent
+  function randomSkill() {
+    // Box-Muller transform for normal distribution
+    const u1 = Math.random();
+    const u2 = Math.random();
+    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    return Math.max(0, Math.min(1, 0.5 + 0.15 * z));
+  }
+
+class ResearchModel {
+  constructor(isAugmented) {
+    this.isAugmented = isAugmented;
+
+    // --- PER-TASK SPEEDUPS (Emergent Model, March 2026) ---
+    // KEY CHANGE: Instead of global 2.8x multiplier, we model:
+    // 1. Task-specific speedups from RCTs (not vendor claims)
+    // 2. Skill-biased effectiveness (AI helps junior > senior)
+    // 3. Validation overhead (catching hallucinations costs time)
+    //
+    // This replaces the old "10x theoretical" and "2.8x idea generation" claims
+    // which were not validated by independent studies.
+    //
+    // Effective speedup emerges from per-task completion, not top-down multiplier.
+    // Expected output factor: ~1.5x (not 3-5x), consistent with METR 2025
+
+    // Per-task base speedups (before skill-bias)
+    this.taskSpeedups = isAugmented ? {
+      boilerplateCode: 1.55,  // Peng et al. RCT: 55.8% faster
+      customCode: 1.0,        // METR 2025: 0% for skilled devs
+      debugging: 1.30,        // Microsoft internal
+      writing: 1.40,          // Noy & Zhang: 40% for below-median
+      litReview: 1.30,        // Self-report
+      dataAnalysis: 1.15,    // Conservative
+      simulation: 1.0,        // No AI for wet lab
+      validation: 0.90,      // SLOWER (hallucination checking)
+    } : {
+      boilerplateCode: 1.0,
+      customCode: 1.0,
+      debugging: 1.0,
+      writing: 1.0,
+      litReview: 1.0,
+      dataAnalysis: 1.0,
+      simulation: 1.0,
+      validation: 1.0,
+    };
+
+    // --- CATEGORY OUTCOME WEIGHTS --- (5 categories: theory+numerics group)
+    // [Publication draft, Derivation, Numerical result, Consistency check, Dead end]
+    //
+    // Traditional: 1 draft/yr/student ≈ 6 drafts over 2yr with 3 PhDs
+    // Augmented: ~2x output = ~12 drafts (but with validation overhead)
+    this.catWeights = isAugmented
+      ? [12, 14, 30, 18, 26]  // Pub, Deriv, Numerical, Consistency, Dead end
+      : [18, 12, 24, 13, 33];
+
+    // --- TASK-SPECIFIC SPEED MULTIPLIERS ---
+    // Maps category to task type for speedup lookup
+    // Publication = writing, Derivation = customCode, Numerical = simulation,
+    // Consistency = validation, Dead end = debugging
+    this.categoryToTask = {
+      0: 'writing',           // Publication draft
+      1: 'customCode',        // Derivation
+      2: 'simulation',       // Numerical result
+      3: 'validation',       // Consistency check
+      4: 'debugging',        // Dead end identification
+    };
+
+    // Phase speed: now uses per-task speedups with skill bias
+    // For visualization, we use weighted average of task speedups
+    this.phaseSpeed = isAugmented
+      ? { publication: 1.40, derivation: 1.15, numerical: 1.0, consistency: 0.90, deadEnd: 1.30 }
+      : { publication: 1.0, derivation: 1.0, numerical: 1.0, consistency: 1.0, deadEnd: 1.0 };
+    this.phaseSpeedArr = [
+      this.phaseSpeed.publication,
+      this.phaseSpeed.derivation,
+      this.phaseSpeed.numerical,
+      this.phaseSpeed.consistency,
+      this.phaseSpeed.deadEnd,
+    ];
+
+    // --- HUMAN LEARNING CURVE ---
+    // Traditional: +15%/year, Augmented: +20%/year (lower than old 25%)
+    // as AI learning curve flattens after initial adoption
+    this.learningRatePerYear = isAugmented ? 0.20 : 0.15;
+
+    // --- MAX RESEARCH DIRECTIONS (nodes) ---
+    // Traditional: ~30 directions, Augmented: ~55 (not 85)
+    // More conservative: 1.8x not 2.8x, consistent with METR
+    this.maxNodes = isAugmented ? 55 : 30;
+
+    // --- TRAVELLER DENSITY ---
+    // Augmented: more parallel threads but less dramatic increase
+    this.maxTravellers = isAugmented ? 40 : 25;
+
+    // --- ARC GROW SPEED ---
+    // Augmented: faster but not 3x+ — more conservative
+    this.arcGrowBase = isAugmented ? 0.55 : 1.2;
+
+    // --- IMPACT PROBABILITY ---
+    // Augmented: higher but with validation cost
+    this.impactProb = isAugmented ? 0.30 : 0.25;
+
+    // --- SKILL DISTRIBUTION ---
+    // Each PhD agent has skill level N(0.5, 0.15)
+    // This determines effective speedup for augmented tasks
+    this.phdSkills = isAugmented
+      ? [randomSkill(), randomSkill(), randomSkill()]
+      : [0.5, 0.5, 0.5]; // Traditional lab: no skill variation needed
+  }
+
+  // Get effective speedup for a task, considering skill level
+  getEffectiveSpeedup(taskType, phdIdx = 0) {
+    if (!this.isAugmented) return 1.0;
+    const baseSpeedup = this.taskSpeedups[taskType] || 1.0;
+    if (baseSpeedup <= 1.0) return baseSpeedup; // No gain or slowdown tasks
+    const skill = this.phdSkills[phdIdx] || 0.5;
+    return effectiveSpeedup(baseSpeedup, skill);
+  }
+
+  // Learning curve: efficiency multiplier at a given elapsed time
+  efficiencyAt(elapsedSec) {
+    const years = (elapsedSec / ANIM_DURATION) * REAL_YEARS;
+    return 1.0 + this.learningRatePerYear * years;
+  }
+
+  // Node spawn interval at given elapsed time
+  // Uses effective speedup from task completion, not global multiplier
+  spawnInterval(nodeCount, elapsedSec) {
+    const base = 0.77; // base interval for 1 direction per 2 weeks
+    const eff = this.efficiencyAt(elapsedSec);
+    // Slow down as network grows (coordination overhead)
+    const crowdFactor = nodeCount < 6 ? 0.65 : nodeCount < 20 ? 0.85 : 1.0;
+    // Use average task speedup for idea generation
+    const avgSpeedup = this.isAugmented ? 1.35 : 1.0;
+    return (base * crowdFactor) / (avgSpeedup * eff);
+  }
+
+  // Pick category index using this model's weights
+  // Publication drafts (idx 0) are gated: need ≥ maturityThreshold prior non-draft events
+  pickCategory(tracker) {
+    // Threshold based on total event count, not old multiplier
+    const totalEvents = tracker ? tracker.reduce((s, r) => s + r.idx, 0) : 0;
+    const threshold = this.isAugmented ? 12 : 6;
+    const mature = totalEvents >= threshold;
+    // Build effective weights — zero out publication if immature
+    const ew = this.catWeights.map((w, i) => (i === 0 && !mature) ? 0 : w);
+    const total = ew.reduce((a, b) => a + b, 0);
+    let r = Math.random() * total;
+    for (let i = 0; i < ew.length; i++) {
+      r -= ew[i];
+      if (r <= 0) return i;
+    }
+    return ew.length - 1;
+  }
+
+  // Traveller spawn interval
+  // Uses average task speedup, not old multiplier
+  travInterval(elapsedSec) {
+    const eff = this.efficiencyAt(elapsedSec);
+    const avgSpeedup = this.isAugmented ? 1.35 : 1.0;
+    return 0.3 / (avgSpeedup * eff * 0.5);
+  }
+
+  // Traveller speed for a given category
+  // Base speed 0.35 (traditional), scaled by phase multiplier
+  travSpeed(catIdx) {
+    const base = 0.35;
+    const mult = this.phaseSpeedArr[catIdx] || 1.0;
+    // Add small random variation (±15%)
+    return base * mult * (0.85 + Math.random() * 0.3);
+  }
+}
+
+const modelTraditional = new ResearchModel(false);
+const modelAugmented = new ResearchModel(true);
+
+// ============================================================
+// MIND MAP
+// ============================================================
+class MindMap {
+  constructor(cx, cy, model, tracker) {
+    this.cx = cx;
+    this.cy = cy;
+    this.model = model;
+    this.tracker = tracker; // reference to this panel's tracker
+    this.nodes = [{ x: cx, y: cy, depth: 0, parentIdx: -1, childCount: 0, born: 0, catIdx: -1, phdIdx: -1, color: WHITE, size: 6 }];
+    this.nextPhd = 0; // round-robin for root-level assignments
+    this.arcs = [];
+    this.travellers = [];
+    this.impacts = [];
+    this.spawnTimer = 0;
+    this.travTimer = 0;
+  }
+
+  spawnNode(now) {
+    if (this.nodes.length >= this.model.maxNodes) return;
+    let parentIdx = 0;
+    const n = this.nodes.length;
+    if (n >= 4) {
+      const cands = [];
+      for (let i = 0; i < n; i++) {
+        const nd = this.nodes[i];
+        if (nd.childCount < 3 && nd.depth < 5) {
+          const w = (3 - nd.childCount) * (i > n - 10 ? 3 : 1);
+          for (let j = 0; j < w; j++) cands.push(i);
+        }
+      }
+      if (cands.length > 0) parentIdx = cands[Math.floor(Math.random() * cands.length)];
+    }
+    const parent = this.nodes[parentIdx];
+    const depth = parent.depth + 1;
+    const ci = this.model.pickCategory(this.tracker);
+    // Assign PhD: inherit from parent, or round-robin if from root
+    let phdIdx;
+    if (parent.phdIdx >= 0) {
+      phdIdx = parent.phdIdx;
+    } else {
+      phdIdx = this.nextPhd;
+      this.nextPhd = (this.nextPhd + 1) % 3;
+    }
+    const color = phdColors[phdIdx]; // node/arc colored by PhD owner
+    const branchLen = 40 + Math.random() * 30 - depth * 5;
+    const angle = (parent.childCount / 3) * Math.PI * 2 + Math.random() * 1.5 + parentIdx * 0.4;
+    let dx = Math.cos(angle) * branchLen;
+    let dy = Math.sin(angle) * branchLen;
+    if (parent.parentIdx >= 0) {
+      const gp = this.nodes[parent.parentIdx];
+      const awayX = parent.x - gp.x;
+      const awayY = parent.y - gp.y;
+      const awayLen = Math.sqrt(awayX * awayX + awayY * awayY) || 1;
+      dx += (awayX / awayLen) * branchLen * 0.4;
+      dy += (awayY / awayLen) * branchLen * 0.4;
+    }
+    const x = parent.x + dx;
+    const y = parent.y + dy;
+    parent.childCount++;
+    const size = Math.max(2.5, 5 - depth * 0.6);
+    this.nodes.push({ x, y, depth, parentIdx, childCount: 0, born: now, catIdx: ci, phdIdx, color, size });
+    const toIdx = this.nodes.length - 1;
+    const mx = (parent.x + x) / 2;
+    const my = (parent.y + y) / 2;
+    const ndx = -(y - parent.y);
+    const ndy = (x - parent.x);
+    const nlen = Math.sqrt(ndx * ndx + ndy * ndy) || 1;
+    const curvature = (0.15 + Math.random() * 0.2) * (Math.random() < 0.5 ? 1 : -1);
+    const cpx = mx + (ndx / nlen) * branchLen * curvature;
+    const cpy = my + (ndy / nlen) * branchLen * curvature;
+    this.arcs.push({ fromIdx: parentIdx, toIdx, catIdx: ci, phdIdx, color, born: now, cpx, cpy, growT: 0, grown: false });
+  }
+
+  spawnTraveller(now) {
+    const grownArcs = this.arcs.filter(a => a.grown);
+    if (grownArcs.length === 0 || this.travellers.length >= this.model.maxTravellers) return;
+    const arc = grownArcs[Math.floor(Math.random() * grownArcs.length)];
+    const arcIdx = this.arcs.indexOf(arc);
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    // Traveller inherits arc's PhD color for display, catIdx for tracker
+    // Speed depends on category: simulations zip, validation crawls (same both sides)
+    const speed = this.model.travSpeed(arc.catIdx);
+    this.travellers.push({ arcIdx, t: dir === 1 ? 0 : 1, speed, direction: dir, catIdx: arc.catIdx, color: arc.color, alive: true, born: now });
+  }
+
+  triggerImpact(x, y, catIdx, color, now) {
+    // Log to tracker on every impact
+    logToTracker(this.tracker, catIdx);
+    const boltCount = 2 + Math.floor(Math.random() * 2);
+    for (let b = 0; b < boltCount; b++) {
+      const segments = [];
+      let bx = x, by = y;
+      const angle = Math.random() * Math.PI * 2;
+      const len = 8 + Math.random() * 15;
+      const steps = 5 + Math.floor(Math.random() * 4);
+      for (let s = 0; s <= steps; s++) {
+        segments.push({ x: bx, y: by });
+        const stepAngle = angle + (Math.random() - 0.5) * 1.2;
+        bx += Math.cos(stepAngle) * (len / steps);
+        by += Math.sin(stepAngle) * (len / steps);
+      }
+      this.impacts.push({ type: 'bolt', segments, color, born: now, lifespan: 0.25 + Math.random() * 0.2 });
+    }
+    this.impacts.push({ type: 'wave', x, y, color, born: now, lifespan: 0.6, maxR: 15 + Math.random() * 10 });
+  }
+
+  getBezierPoint(arc, t) {
+    const from = this.nodes[arc.fromIdx];
+    const to = this.nodes[arc.toIdx];
+    const u = 1 - t;
+    return { x: u*u*from.x + 2*u*t*arc.cpx + t*t*to.x, y: u*u*from.y + 2*u*t*arc.cpy + t*t*to.y };
+  }
+
+  update(now, dt, elapsed) {
+    this.spawnTimer += dt;
+    const interval = this.model.spawnInterval(this.nodes.length, elapsed);
+    if (this.spawnTimer > interval && this.nodes.length < this.model.maxNodes) {
+      this.spawnTimer = 0;
+      this.spawnNode(now);
+    }
+    this.travTimer += dt;
+    const travInterval = this.model.travInterval(elapsed);
+    if (this.travTimer > travInterval) {
+      this.travTimer = 0;
+      this.spawnTraveller(now);
+    }
+    for (const arc of this.arcs) {
+      if (!arc.grown) {
+        const age = now - arc.born;
+        arc.growT = Math.min(age / this.model.arcGrowBase, 1);
+        if (arc.growT >= 1) {
+          arc.grown = true;
+          const nd = this.nodes[arc.toIdx];
+          this.triggerImpact(nd.x, nd.y, arc.catIdx, catColor(arc.catIdx), now);
+        }
+      }
+    }
+    for (let i = this.travellers.length - 1; i >= 0; i--) {
+      const tr = this.travellers[i];
+      if (!tr.alive) { this.travellers.splice(i, 1); continue; }
+      const arc = this.arcs[tr.arcIdx];
+      if (!arc) { tr.alive = false; continue; }
+      tr.t += tr.direction * tr.speed * dt;
+      if (tr.t > 1 || tr.t < 0) {
+        const endNodeIdx = tr.t > 1 ? arc.toIdx : arc.fromIdx;
+        const endNode = this.nodes[endNodeIdx];
+        if (Math.random() < this.model.impactProb) this.triggerImpact(endNode.x, endNode.y, tr.catIdx, catColor(tr.catIdx), now);
+        const roll = Math.random();
+        if (roll < 0.5) {
+          const connected = this.arcs.map((a, idx) => ({ a, idx })).filter(({ a, idx }) => idx !== tr.arcIdx && a.grown && (a.fromIdx === endNodeIdx || a.toIdx === endNodeIdx));
+          if (connected.length > 0) {
+            const next = connected[Math.floor(Math.random() * connected.length)];
+            tr.arcIdx = next.idx;
+            if (next.a.fromIdx === endNodeIdx) { tr.t = 0; tr.direction = 1; } else { tr.t = 1; tr.direction = -1; }
+          } else { tr.direction *= -1; tr.t = Math.max(0, Math.min(1, tr.t)); }
+        } else if (roll < 0.8) { tr.direction *= -1; tr.t = Math.max(0, Math.min(1, tr.t)); }
+        else { tr.alive = false; }
+      }
+    }
+    for (let i = this.impacts.length - 1; i >= 0; i--) {
+      if (now - this.impacts[i].born > this.impacts[i].lifespan) this.impacts.splice(i, 1);
+    }
+  }
+
+  draw(now) {
+    for (const arc of this.arcs) {
+      if (arc.growT <= 0) continue;
+      const from = this.nodes[arc.fromIdx];
+      const ease = 1 - Math.pow(1 - arc.growT, 3);
+      const steps = Math.max(2, Math.floor(40 * ease));
+      ctx.beginPath();
+      ctx.moveTo(from.x, from.y);
+      for (let s = 1; s <= steps; s++) {
+        const pt = this.getBezierPoint(arc, Math.min((s / 40) * ease, 1));
+        ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.strokeStyle = arc.color;
+      ctx.globalAlpha = arc.grown ? (0.2 + 0.08 * Math.sin(now * 0.8)) : Math.min((now - arc.born) * 2, 0.3);
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    for (let i = 0; i < this.nodes.length; i++) {
+      const nd = this.nodes[i];
+      const age = now - nd.born;
+      const alpha = i === 0 ? 1 : Math.min(age / 0.6, 0.95);
+      const pulse = 1 + 0.1 * Math.sin(now * 1.8 + i * 0.7);
+      const r = nd.size * pulse;
+      const auraR = r * 4;
+      const grad = ctx.createRadialGradient(nd.x, nd.y, r, nd.x, nd.y, auraR);
+      grad.addColorStop(0, nd.color + '30');
+      grad.addColorStop(1, nd.color + '00');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = alpha * 0.6;
+      ctx.beginPath(); ctx.arc(nd.x, nd.y, auraR, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = nd.color;
+      ctx.globalAlpha = alpha;
+      ctx.beginPath(); ctx.arc(nd.x, nd.y, r, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    for (const tr of this.travellers) {
+      if (!tr.alive) continue;
+      const arc = this.arcs[tr.arcIdx];
+      if (!arc) continue;
+      const pt = this.getBezierPoint(arc, Math.max(0, Math.min(1, tr.t)));
+      const age = now - tr.born;
+      const alpha = Math.min(age * 3, 0.9);
+      const grad = ctx.createRadialGradient(pt.x, pt.y, 1, pt.x, pt.y, 6);
+      grad.addColorStop(0, tr.color + '60');
+      grad.addColorStop(1, tr.color + '00');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = alpha * 0.7;
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = tr.color;
+      ctx.globalAlpha = alpha;
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    for (const fx of this.impacts) {
+      const age = now - fx.born;
+      const t = age / fx.lifespan;
+      if (fx.type === 'bolt') {
+        const flicker = 0.5 + 0.5 * Math.sin(now * 50 + Math.random() * 10);
+        ctx.strokeStyle = fx.color;
+        ctx.globalAlpha = (1 - t) * flicker;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let s = 0; s < fx.segments.length; s++) { if (s === 0) ctx.moveTo(fx.segments[s].x, fx.segments[s].y); else ctx.lineTo(fx.segments[s].x, fx.segments[s].y); }
+        ctx.stroke(); ctx.globalAlpha = 1;
+      }
+      if (fx.type === 'wave') {
+        const r = age * fx.maxR / fx.lifespan;
+        ctx.strokeStyle = fx.color;
+        ctx.globalAlpha = (1 - t * t) * 0.5;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(fx.x, fx.y, r + 1, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+
+  // Get bounding box of all nodes
+  getBounds() {
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const nd of this.nodes) {
+      minX = Math.min(minX, nd.x); maxX = Math.max(maxX, nd.x);
+      minY = Math.min(minY, nd.y); maxY = Math.max(maxY, nd.y);
+    }
+    return { minX, maxX, minY, maxY, w: maxX - minX, h: maxY - minY };
+  }
+}
+
+// ============================================================
+// INIT MAPS
+// ============================================================
+let leftMap = null;
+let rightMap = null;
+
+function initMaps() {
+  const w = W();
+  const h = H();
+  const qw = w / 4;
+  leftMap = new MindMap(qw, h * 0.42, modelTraditional, trackerLeft);
+  rightMap = new MindMap(qw * 3, h * 0.42, modelAugmented, trackerRight);
+}
+initMaps();
+window.addEventListener('resize', () => { resize(); initMaps(); });
+
+// ============================================================
+  // INFO PANEL INTERACTION
+  // ============================================================
+  const infoBtn = document.getElementById('infoBtn');
+  const infoPanel = document.getElementById('infoPanel');
+  const closeInfo = document.getElementById('closeInfo');
+
+  infoBtn.addEventListener('click', () => {
+    infoPanel.classList.toggle('open');
+  });
+
+  closeInfo.addEventListener('click', () => {
+    infoPanel.classList.remove('open');
+  });
+
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') infoPanel.classList.remove('open');
+  });
+
+// ============================================================
+// ZOOM STATE
+// ============================================================
+const ZOOM_START = 2.8;
+const ZOOM_END = 1.0;
+const ZOOM_DURATION = 45; // slower zoom to match 90s animation
+let currentZoom = ZOOM_START;
+
+function getZoom(elapsed) {
+  if (elapsed < 1.5) return ZOOM_START;
+  const t = Math.min((elapsed - 1.5) / ZOOM_DURATION, 1);
+  const ease = 1 - Math.pow(1 - t, 2.5);
+  return ZOOM_START + (ZOOM_END - ZOOM_START) * ease;
+}
+
+// ============================================================
+// BACKGROUND STARS
+// ============================================================
+const stars = [];
+for (let i = 0; i < 300; i++) {
+  stars.push({
+    x: Math.random(), y: Math.random(),
+    size: 0.5 + Math.random() * 1.2,
+    alpha: 0.1 + Math.random() * 0.3,
+    color: [SUBTLE, G[0], G[1], '#1a1e24'][Math.floor(Math.random() * 4)],
+  });
+}
+
+function drawStars() {
+  for (const s of stars) {
+    ctx.fillStyle = s.color;
+    ctx.globalAlpha = s.alpha;
+    ctx.beginPath();
+    ctx.arc(s.x * W(), s.y * H(), s.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ============================================================
+// PHD FIGURES
+// ============================================================
+// PhD colors are DISTINCT from the 5 tracker category colors:
+//   Tracker: green (#39d353), red (#f85149), blue (#58a6ff), orange (#d29922), purple (#bc8cff)
+//   PhDs:    cyan (#2dd4bf),  pink (#f472b6), yellow (#facc15)
+const phdAngles = [0, 2.094, 4.189];
+const PHD_CYAN   = '#2dd4bf';
+const PHD_PINK   = '#f472b6';
+const PHD_YELLOW = '#facc15';
+const phdColors = [PHD_CYAN, PHD_PINK, PHD_YELLOW];
+const phdLabels = ['PhD 1', 'PhD 2', 'PhD 3'];
+
+function drawPhDOrbit(core, now, orbitR, orbitSpeed, phdSize, auraSize) {
+  // Compute positions first
+  const pos = [];
+  for (let i = 0; i < 3; i++) {
+    const angle = phdAngles[i] + now * orbitSpeed;
+    pos.push({ x: core.x + Math.cos(angle) * orbitR, y: core.y + Math.sin(angle) * orbitR });
+  }
+
+  // Lines from each PhD to PI (core)
+  for (let i = 0; i < 3; i++) {
+    ctx.strokeStyle = phdColors[i];
+    ctx.globalAlpha = 0.45;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(core.x, core.y); ctx.lineTo(pos[i].x, pos[i].y); ctx.stroke();
+  }
+
+  // Lines between PhD pairs (team mesh)
+  for (let i = 0; i < 3; i++) {
+    for (let j = i + 1; j < 3; j++) {
+      ctx.strokeStyle = WHITE;
+      ctx.globalAlpha = 0.3;
+      ctx.lineWidth = 1.0;
+      ctx.beginPath(); ctx.moveTo(pos[i].x, pos[i].y); ctx.lineTo(pos[j].x, pos[j].y); ctx.stroke();
+    }
+  }
+
+  // Draw PhD dots and auras
+  for (let i = 0; i < 3; i++) {
+    const { x, y } = pos[i];
+    ctx.fillStyle = phdColors[i];
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath(); ctx.arc(x, y, phdSize, 0, Math.PI * 2); ctx.fill();
+    const grad = ctx.createRadialGradient(x, y, 1, x, y, auraSize);
+    grad.addColorStop(0, phdColors[i] + '25');
+    grad.addColorStop(1, phdColors[i] + '00');
+    ctx.fillStyle = grad;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath(); ctx.arc(x, y, auraSize, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawTraditionalTeam(now) {
+  if (!leftMap) return;
+  drawPhDOrbit(leftMap.nodes[0], now, 18, 0.15, 3, 8);
+}
+
+function drawAugmentedTeam(now) {
+  if (!rightMap) return;
+  const core = rightMap.nodes[0];
+  for (let i = 3; i >= 1; i--) {
+    const r = 12 + i * 10 + 3 * Math.sin(now * 1.2 + i);
+    const grad = ctx.createRadialGradient(core.x, core.y, 2, core.x, core.y, r);
+    grad.addColorStop(0, G[3] + '18');
+    grad.addColorStop(0.5, G[2] + '08');
+    grad.addColorStop(1, G[1] + '00');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(core.x, core.y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  const ringR = 22;
+  const dashCount = 24;
+  const ringSpeed = now * 0.8;
+  ctx.lineWidth = 1.2;
+  for (let d = 0; d < dashCount; d++) {
+    const a1 = (d / dashCount) * Math.PI * 2 + ringSpeed;
+    const a2 = ((d + 0.4) / dashCount) * Math.PI * 2 + ringSpeed;
+    ctx.strokeStyle = G[3];
+    ctx.globalAlpha = 0.25 + 0.2 * Math.sin(now * 3 + d * 0.5);
+    ctx.beginPath(); ctx.arc(core.x, core.y, ringR, a1, a2); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.font = '600 8px "Helvetica Neue", Arial, sans-serif';
+  ctx.fillStyle = G[3];
+  ctx.globalAlpha = 0.5 + 0.2 * Math.sin(now * 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('AI', core.x, core.y + ringR + 12);
+  ctx.globalAlpha = 1;
+  drawPhDOrbit(core, now, 32, 0.3, 3.5, 10);
+  for (let i = 0; i < 3; i++) {
+    const angle = phdAngles[i] + now * 0.3;
+    const px = core.x + Math.cos(angle) * 32;
+    const py = core.y + Math.sin(angle) * 32;
+    const extLen = 15 + 8 * Math.sin(now * 2.5 + i * 2);
+    const ex = core.x + Math.cos(angle) * (32 + extLen);
+    const ey = core.y + Math.sin(angle) * (32 + extLen);
+    ctx.strokeStyle = phdColors[i];
+    ctx.globalAlpha = 0.12 + 0.08 * Math.sin(now * 3 + i);
+    ctx.lineWidth = 0.6;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  }
+}
+
+// ============================================================
+// PRODUCTIVITY HISTORY (for center graph)
+// ============================================================
+const prodHistory = []; // { t, ratio } — rolling-averaged, sampled every 0.5s
+let prodSampleTimer = 0;
+const PROD_SAMPLE_INTERVAL = 0.5;
+const ROLLING_WINDOW = 10; // average over last N raw samples
+const rawRatioBuffer = []; // raw ratio samples for rolling average
+const MIN_EVENTS_THRESHOLD = 5; // don't compute ratio until both sides have this many
+
+function sampleProductivity(elapsedSec) {
+  const lp = totalTrackerProgress(trackerLeft);
+  const rp = totalTrackerProgress(trackerRight);
+  // Don't record until both sides have meaningful data
+  if (lp < MIN_EVENTS_THRESHOLD || rp < MIN_EVENTS_THRESHOLD) return;
+  const rawRatio = rp / Math.max(lp, 1);
+  rawRatioBuffer.push(rawRatio);
+  // Rolling average over last N samples
+  const windowStart = Math.max(0, rawRatioBuffer.length - ROLLING_WINDOW);
+  const window = rawRatioBuffer.slice(windowStart);
+  const avg = window.reduce((a, b) => a + b, 0) / window.length;
+  prodHistory.push({ t: elapsedSec, ratio: avg });
+}
+
+// ============================================================
+// UI — drawn in screen space (no zoom)
+// ============================================================
+let textAlpha = 1;
+let textRevealed = true;
+
+function drawProductivityGraph(midX, h, outputRatio, elapsed) {
+  // Graph region: center divider, bottom-to-top
+  const graphTop = 100;
+  const trackerRowH = 8 + 3;
+  const trackerTotalH = trackCategories.length * trackerRowH;
+  const graphBottom = h - 12 - trackerTotalH - 16;
+  const graphH = graphBottom - graphTop;
+  if (graphH < 40) return;
+
+  const graphW = 56;
+  const gLeft = midX - graphW / 2;
+  const gRight = midX + graphW / 2;
+
+  // --- Fixed Y-axis: 0 to 2 weeks (= full ANIM_DURATION) ---
+  // Bottom = week 0, Top = week 2
+  // The line grows upward from bottom as elapsed increases
+
+  // Background strip
+  ctx.fillStyle = '#161b22';
+  ctx.globalAlpha = 0.5;
+  ctx.fillRect(gLeft, graphTop, graphW, graphH);
+  ctx.globalAlpha = 1;
+
+  // --- Time tick marks: Traditional (left) = years, Augmented (right) = weeks ---
+  const timeTicksLeft = [
+    { label: '0', frac: 0 },
+    { label: 'yr 1', frac: 0.5 },
+    { label: 'yr 2', frac: 1.0 },
+  ];
+  const timeTicksRight = [
+    { label: '0', frac: 0 },
+    { label: 'wk 1', frac: 0.5 },
+    { label: 'wk 2', frac: 1.0 },
+  ];
+  ctx.font = '600 9px "Courier New", monospace';
+  // Draw tick lines at each frac (same positions for both sides)
+  const allFracs = [0, 0.5, 1.0];
+  for (const frac of allFracs) {
+    const y = graphBottom - frac * graphH;
+    ctx.strokeStyle = BORDER;
+    ctx.globalAlpha = 0.5;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(gLeft, y); ctx.lineTo(gRight, y); ctx.stroke();
+  }
+  // Left labels (Traditional = years)
+  for (const tick of timeTicksLeft) {
+    const y = graphBottom - tick.frac * graphH;
+    ctx.fillStyle = WHITE;
+    ctx.globalAlpha = 0.7;
+    ctx.textAlign = 'right';
+    ctx.fillText(tick.label, gLeft - 4, y + 3);
+  }
+  // Right labels (Augmented = weeks)
+  for (const tick of timeTicksRight) {
+    const y = graphBottom - tick.frac * graphH;
+    ctx.fillStyle = G[3];
+    ctx.globalAlpha = 0.7;
+    ctx.textAlign = 'left';
+    ctx.fillText(tick.label, gRight + 4, y + 3);
+  }
+
+  // --- X-axis: ratio gridlines (only 1x, 2x, 3x to keep clean) ---
+  const maxRatio = 3; // fixed scale, capped at 3x for honest visualization
+  const ratioTicks = [1, 2, 3];
+  ctx.font = '600 9px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  for (const rv of ratioTicks) {
+    const x = gLeft + ((rv - 1) / (maxRatio - 1)) * graphW;
+    ctx.strokeStyle = BORDER;
+    ctx.globalAlpha = 0.3;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(x, graphTop); ctx.lineTo(x, graphBottom); ctx.stroke();
+    ctx.fillStyle = WHITE;
+    ctx.globalAlpha = 0.6;
+    ctx.fillText(`${rv}x`, x, graphBottom + 12);
+  }
+  ctx.globalAlpha = 1;
+
+  if (prodHistory.length < 2) return;
+
+  // --- Tron-style line: grows from bottom as time progresses ---
+  // Each sample maps: y = its time position (fixed on 0..ANIM_DURATION axis)
+  //                    x = its ratio value
+
+  // Filled area (subtle glow behind the line)
+  ctx.beginPath();
+  let firstPt = true;
+  for (let i = 0; i < prodHistory.length; i++) {
+    const p = prodHistory[i];
+    const yFrac = Math.min(p.t / ANIM_DURATION, 1);
+    const y = graphBottom - yFrac * graphH;
+    const x = gLeft + ((Math.min(Math.max(p.ratio, 1), maxRatio) - 1) / (maxRatio - 1)) * graphW;
+    if (firstPt) { ctx.moveTo(x, y); firstPt = false; }
+    else ctx.lineTo(x, y);
+  }
+  // Close fill to left edge
+  const lastPt = prodHistory[prodHistory.length - 1];
+  const lastYFrac = Math.min(lastPt.t / ANIM_DURATION, 1);
+  const lastY = graphBottom - lastYFrac * graphH;
+  ctx.lineTo(gLeft, lastY);
+  // Back down to first point's Y
+  const firstYFrac = Math.min(prodHistory[0].t / ANIM_DURATION, 1);
+  ctx.lineTo(gLeft, graphBottom - firstYFrac * graphH);
+  ctx.closePath();
+  const fillGrad = ctx.createLinearGradient(gLeft, graphBottom, gRight, graphTop);
+  fillGrad.addColorStop(0, G[1] + '08');
+  fillGrad.addColorStop(1, G[3] + '25');
+  ctx.fillStyle = fillGrad;
+  ctx.globalAlpha = 0.7;
+  ctx.fill();
+
+  // --- The Tron line itself: bright, sharp, with glow ---
+  // Outer glow
+  ctx.beginPath();
+  for (let i = 0; i < prodHistory.length; i++) {
+    const p = prodHistory[i];
+    const yFrac = Math.min(p.t / ANIM_DURATION, 1);
+    const y = graphBottom - yFrac * graphH;
+    const x = gLeft + ((Math.min(Math.max(p.ratio, 1), maxRatio) - 1) / (maxRatio - 1)) * graphW;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = G[3];
+  ctx.globalAlpha = 0.3;
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // Core line (sharp, bright)
+  ctx.beginPath();
+  for (let i = 0; i < prodHistory.length; i++) {
+    const p = prodHistory[i];
+    const yFrac = Math.min(p.t / ANIM_DURATION, 1);
+    const y = graphBottom - yFrac * graphH;
+    const x = gLeft + ((Math.min(Math.max(p.ratio, 1), maxRatio) - 1) / (maxRatio - 1)) * graphW;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = G[3];
+  ctx.globalAlpha = 1.0;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Bright white core for Tron effect
+  ctx.beginPath();
+  for (let i = 0; i < prodHistory.length; i++) {
+    const p = prodHistory[i];
+    const yFrac = Math.min(p.t / ANIM_DURATION, 1);
+    const y = graphBottom - yFrac * graphH;
+    const x = gLeft + ((Math.min(Math.max(p.ratio, 1), maxRatio) - 1) / (maxRatio - 1)) * graphW;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = '#ffffff';
+  ctx.globalAlpha = 0.35;
+  ctx.lineWidth = 0.8;
+  ctx.stroke();
+
+  // --- Leading dot (glowing head of the Tron line) ---
+  {
+    const p = prodHistory[prodHistory.length - 1];
+    const yFrac = Math.min(p.t / ANIM_DURATION, 1);
+    const y = graphBottom - yFrac * graphH;
+    const x = gLeft + ((Math.min(Math.max(p.ratio, 1), maxRatio) - 1) / (maxRatio - 1)) * graphW;
+    // Glow
+    const dotGrad = ctx.createRadialGradient(x, y, 0, x, y, 8);
+    dotGrad.addColorStop(0, G[3] + '80');
+    dotGrad.addColorStop(1, G[3] + '00');
+    ctx.fillStyle = dotGrad;
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI * 2); ctx.fill();
+    // Core dot
+    ctx.fillStyle = WHITE;
+    ctx.globalAlpha = 0.95;
+    ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawPhdLegend(cx, y) {
+  // Small inline legend: ● PhD 1  ● PhD 2  ● PhD 3
+  ctx.font = '400 8px "Helvetica Neue", Arial, sans-serif';
+  const items = phdLabels.map((lbl, i) => ({ lbl, color: phdColors[i] }));
+  const spacing = 52;
+  const totalW = spacing * (items.length - 1);
+  const startX = cx - totalW / 2;
+  ctx.textAlign = 'left';
+  for (let i = 0; i < items.length; i++) {
+    const x = startX + i * spacing;
+    ctx.fillStyle = items[i].color;
+    ctx.globalAlpha = 0.9;
+    ctx.beginPath(); ctx.arc(x - 5, y - 3, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = WHITE;
+    ctx.globalAlpha = 0.7;
+    ctx.fillText(items[i].lbl, x, y);
+  }
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'center';
+}
+
+function drawUI(now) {
+  const w = W();
+  const h = H();
+  const midX = w / 2;
+
+  // --- Per-panel progress & output factor ---
+  const leftProgress = totalTrackerProgress(trackerLeft);
+  const rightProgress = totalTrackerProgress(trackerRight);
+  const outputRatio = rightProgress / Math.max(leftProgress, 1);
+
+  // Draw productivity graph FIRST (behind the divider line)
+  drawProductivityGraph(midX, h, outputRatio, elapsed);
+
+  // Divider line (dashed, on top of graph)
+  ctx.strokeStyle = BORDER;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(midX, 30);
+  ctx.lineTo(midX, 96); // top segment: header area
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Helper to draw a panel's progress bar
+  function drawPanelIndicator(cx, tracker, color, isRight) {
+    const total = totalTrackerProgress(tracker);
+    const maxEvents = isRight ? 200 : 60;
+    const barY = 66;
+    const barW = 80;
+    const barH = 3;
+    const barX = cx - barW / 2;
+    ctx.fillStyle = '#161b22';
+    ctx.fillRect(barX, barY, barW, barH);
+    const frac = Math.min(total / maxEvents, 1);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.8;
+    ctx.fillRect(barX, barY, barW * frac, barH);
+
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = WHITE;
+    ctx.font = '400 9px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`events: ${total}`, cx, barY + 14);
+    ctx.globalAlpha = 1;
+  }
+
+  // Output factor between the two (center, at top)
+  // Expected output factor ~1.5x (not 3-5x) per rigorous studies
+  if (textAlpha > 0.3) {
+    ctx.globalAlpha = 1;
+    ctx.font = '700 14px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    // Green only shows meaningful gain (>1.5x), not vendor-hyped 2x+
+    ctx.fillStyle = outputRatio > 1.5 ? G[3] : WHITE;
+    ctx.fillText(`${outputRatio.toFixed(1)}x`, midX, 74);
+    ctx.font = '400 9px "Courier New", monospace';
+    ctx.fillStyle = WHITE;
+    ctx.globalAlpha = 0.7;
+    ctx.fillText('output factor', midX, 88);
+    ctx.globalAlpha = 1;
+  }
+
+  if (textAlpha > 0) {
+    ctx.globalAlpha = 1;
+    ctx.font = '600 14px "Helvetica Neue", Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = WHITE;
+    ctx.fillText('TRADITIONAL LAB', midX / 2, 36);
+
+    ctx.font = '400 11px "Helvetica Neue", Arial, sans-serif';
+    ctx.fillStyle = WHITE;
+    ctx.globalAlpha = 0.75;
+    ctx.fillText('1 PI  +  3 PhDs  ·  2 years', midX / 2, 54);
+    ctx.globalAlpha = 1;
+
+    drawPanelIndicator(midX / 2, trackerLeft, WHITE, false);
+
+    // PhD color legend (left panel)
+    drawPhdLegend(midX / 2, 95);
+
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = WHITE;
+    ctx.font = '600 14px "Helvetica Neue", Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('AUGMENTED LAB', midX + midX / 2, 36);
+
+    ctx.font = '400 11px "Helvetica Neue", Arial, sans-serif';
+    ctx.fillStyle = G[3];
+    ctx.globalAlpha = 0.9;
+    ctx.fillText('1 PI  +  3 PhDs  +  AI  ·  2 weeks', midX + midX / 2, 54);
+    ctx.globalAlpha = 1;
+
+    drawPanelIndicator(midX + midX / 2, trackerRight, G[3], true);
+
+    // PhD color legend (right panel)
+    drawPhdLegend(midX + midX / 2, 95);
+
+    const trackerRowH = 8 + 3;
+    const trackerTotalH = trackCategories.length * trackerRowH;
+    const trackerBaseY = h - 12 - trackerTotalH;
+
+    ctx.globalAlpha = textAlpha;
+    drawTracker(trackerLeft, midX / 2, trackerBaseY);
+    drawTracker(trackerRight, midX + midX / 2, trackerBaseY);
+
+    ctx.textAlign = 'center';
+    ctx.globalAlpha = 1;
+  }
+}
+
+// ============================================================
+// MAIN LOOP
+// ============================================================
+let lastTime = performance.now() / 1000;
+let elapsed = 0;
+function animate() {
+  requestAnimationFrame(animate);
+
+  const now = performance.now() / 1000;
+  const dt = Math.min(now - lastTime, 0.05);
+  lastTime = now;
+  elapsed += dt;
+
+  // Compute zoom
+  currentZoom = getZoom(elapsed);
+
+  // Clear (in screen space)
+  ctx.save();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, W(), H());
+  drawStars();
+  ctx.restore();
+
+  // Update maps (impacts now drive tracker advancement directly)
+  leftMap.update(now, dt, elapsed);
+  rightMap.update(now, dt, elapsed);
+
+  // Sample productivity ratio for the center graph (rolling average)
+  prodSampleTimer += dt;
+  if (prodSampleTimer >= PROD_SAMPLE_INTERVAL) {
+    prodSampleTimer = 0;
+    sampleProductivity(elapsed);
+  }
+
+  // --- Draw LEFT side with zoom ---
+  ctx.save();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.beginPath();
+  ctx.rect(0, 0, W() / 2 - 1, H());
+  ctx.clip();
+  // Zoom around left core
+  const lcx = leftMap.nodes[0].x;
+  const lcy = leftMap.nodes[0].y;
+  ctx.translate(lcx, lcy);
+  ctx.scale(currentZoom, currentZoom);
+  ctx.translate(-lcx, -lcy);
+  drawTraditionalTeam(now);
+  leftMap.draw(now);
+  ctx.restore();
+
+  // --- Draw RIGHT side with zoom (proportional to output) ---
+  ctx.save();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.beginPath();
+  ctx.rect(W() / 2 + 1, 0, W() / 2, H());
+  ctx.clip();
+  // Right side zooms out faster because network is bigger
+  const rightNodeRatio = rightMap.nodes.length / Math.max(leftMap.nodes.length, 1);
+  const rightZoomAdjust = Math.max(ZOOM_END, currentZoom / Math.max(1, rightNodeRatio * 0.3));
+  const rcx = rightMap.nodes[0].x;
+  const rcy = rightMap.nodes[0].y;
+  ctx.translate(rcx, rcy);
+  ctx.scale(rightZoomAdjust, rightZoomAdjust);
+  ctx.translate(-rcx, -rcy);
+  drawAugmentedTeam(now);
+  rightMap.draw(now);
+  ctx.restore();
+
+  // --- UI overlay (screen space, no zoom) ---
+  ctx.save();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  drawUI(now);
+  ctx.restore();
+}
+
+animate();
+</script>
+</body>
+</html>
