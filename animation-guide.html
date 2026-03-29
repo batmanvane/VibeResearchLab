@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animation Guide: Traditional vs Augmented Lab</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0d1117; color: #c9d1d9; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 14px; line-height: 1.6; padding: 40px; max-width: 900px; margin: 0 auto; }
+    h1 { color: #e6edf3; font-size: 24px; margin-bottom: 8px; border-bottom: 1px solid #30363d; padding-bottom: 16px; }
+    h2 { color: #e6edf3; font-size: 18px; margin: 32px 0 16px 0; border-left: 3px solid #39d353; padding-left: 12px; }
+    h3 { color: #8b949e; font-size: 14px; margin: 24px 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+    .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 32px; }
+    p { margin: 12px 0; }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .key-finding { background: #0e4429; border: 1px solid #26a641; border-radius: 6px; padding: 16px; margin: 20px 0; }
+    .key-finding h4 { color: #39d353; margin-bottom: 8px; }
+    .info-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+    .info-table th, .info-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #21262d; }
+    .info-table th { color: #8b949e; font-weight: 500; }
+    .info-table td:first-child { color: #79c0ff; font-family: monospace; }
+    .note { background: #1c2128; border-left: 3px solid #f0883e; padding: 12px 16px; margin: 16px 0; font-size: 13px; }
+    .element-label { display: inline-block; background: #161b22; border: 1px solid #30363d; border-radius: 4px; padding: 2px 8px; font-family: monospace; font-size: 12px; color: #79c0ff; margin-right: 4px; }
+  </style>
+</head>
+<body>
+
+<h1>Animation Guide</h1>
+<p class="subtitle">Understanding what the simulation visualizes and how to read it</p>
+
+<h2>1. What the Animation Shows</h2>
+
+<p>The animation simulates <strong>2 years of research activity</strong> comparing two labs:</p>
+
+<ul>
+  <li><strong>Left — Traditional Lab:</strong> 1 PI + 3 PhDs working without AI assistance over 2 years</li>
+  <li><strong>Right — Augmented Lab:</strong> The same team, now aided by AI tools — completing in ~2 weeks of simulated time</li>
+</ul>
+
+<p>The research activity is visualized as a growing network of nodes and connections. Each node represents a research element (idea, method, result, publication) and edges show how they build on each other. The networks grow at different rates — the Augmented Lab's network is denser and more connected because the model predicts higher productivity.</p>
+
+<p>Each simulation run is stochastic — events occur probabilistically, so the exact growth pattern varies between runs. The expected output factor converges to ~<strong>1.5x</strong> over time, not the 3-5x that vendors claim.</p>
+
+<h2>2. Layout: Desktop vs Mobile</h2>
+
+<table class="info-table">
+  <tr><th>Element</th><th>Desktop (≥768px)</th><th>Mobile (&lt;768px)</th></tr>
+  <tr><td>Panels</td><td>Side-by-side (left / right)</td><td>Stacked vertically (Traditional top, Augmented bottom)</td></tr>
+  <tr><td>Graph</td><td>Center productivity graph</td><td>Removed (space constraints)</td></tr>
+  <tr><td>Output factor</td><td>Small, between panels at top</td><td>Large, centered between sections</td></tr>
+  <tr><td>Lab labels</td><td>Below center line</td><td>At top of each section</td></tr>
+  <tr><td>Progress trackers</td><td>Both at bottom of their panels</td><td>At bottom of each section</td></tr>
+  <tr><td>Credit line</td><td>Centered at very bottom</td><td>Centered at very bottom</td></tr>
+</table>
+
+<h2>3. Network Visualization</h2>
+
+<h3>3.1 Node Types</h3>
+
+<table class="info-table">
+  <tr><th>Node</th><th>Meaning</th></tr>
+  <tr><td>● White / large</td><td>PI (Principal Investigator) — the center hub of the network</td></tr>
+  <tr><td>● Yellow / orange / green</td><td>PhD researchers — spawn new research directions</td></tr>
+  <tr><td>● Blue</td><td>Publication draft — research direction completed</td></tr>
+  <tr><td>● Purple</td><td>Derivation — mathematical progress</td></tr>
+  <tr><td>● Cyan / sky</td><td>Numerical result — computational progress</td></tr>
+  <tr><td>● Orange</td><td>Consistency check — validation of results</td></tr>
+  <tr><td>● Red</td><td>Dead end — abandoned or failed direction</td></tr>
+  <tr><td>○ Transparent</td><td>Research directions in progress (not yet resolved)</td></tr>
+</table>
+
+<h3>3.2 Edges</h3>
+
+<p>Lines connect nodes to show dependencies — a new derivation building on a previous result, a publication draft connecting multiple numerical results, and so on. Denser connections mean more cumulative research progress.</p>
+
+<h3>3.3 Zoom Behavior</h3>
+
+<p>Both sides zoom out over time as the network grows. The Augmented Lab's network is larger, so it zooms out faster to keep everything visible. The relative zoom reflects the productivity gap — you can see the right side's network becoming visually busier faster.</p>
+
+<h2>4. Header Elements</h2>
+
+<h3>4.1 Lab Labels</h3>
+
+<p><span class="element-label">TRADITIONAL LAB</span> and <span class="element-label">AUGMENTED LAB</span> label each panel. Below each label:</p>
+<ul>
+  <li>Traditional: <em>1 PI + 3 PhDs · 2 years</em> — indicates the team composition and real-world timespan</li>
+  <li>Augmented: <em>1 PI + 3 PhDs + AI · 2 weeks</em> — same team with AI, compressed to weeks for visual alignment</li>
+</ul>
+
+<h3>4.2 Progress Bars</h3>
+
+<p>Below the lab labels, a small progress bar shows the cumulative number of events logged. The bar fills as events accumulate, giving a sense of ongoing activity in each lab.</p>
+
+<p>Each event is counted and displayed as <em>events: N</em> below the bar.</p>
+
+<h3>4.3 PhD Color Legend</h3>
+
+<p>A small inline legend shows the color coding for each of the three PhD researchers (PhD 1, PhD 2, PhD 3). Their nodes appear in their respective colors throughout the network.</p>
+
+<h2>5. Output Factor</h2>
+
+<p>The output factor is the ratio of events logged by the Augmented Lab vs. the Traditional Lab. It is displayed between the two panels (or between sections on mobile).</p>
+
+<ul>
+  <li>The number scales based on the current productivity ratio</li>
+  <li>It turns <strong style="color:#39d353">green</strong> only when the ratio exceeds <strong>1.5x</strong> — avoiding the false impression that small gains are significant</li>
+  <li>On mobile it is displayed larger (20px font) for visibility in the stacked layout</li>
+</ul>
+
+<div class="key-finding">
+  <h4>Expected Value: ~1.5x</h4>
+  <p>The model predicts approximately 1.5x output factor — not 3-5x as vendors claim. This is grounded in published RCTs (Peng et al., Noy & Zhang) and independent studies (METR).</p>
+</div>
+
+<h2>6. Productivity Graph (Desktop Only)</h2>
+
+<p>The graph in the center (desktop only) plots the productivity ratio over simulated time:</p>
+
+<ul>
+  <li><strong>X-axis:</strong> Output ratio (1x to 3x)</li>
+  <li><strong>Y-axis:</strong> Simulated time (0 → 2 weeks for Augmented, 0 → 2 years for Traditional)</li>
+  <li><strong>Line:</strong> Tron-style glowing line that grows from bottom as time progresses — shows how the ratio evolves</li>
+  <li><strong>Glow dot:</strong> The leading edge of the line shows the current ratio at the current time</li>
+</ul>
+
+<p>On the left side of the graph, time is labeled in <em>years</em> (Traditional Lab). On the right side, it is labeled in <em>weeks</em> (Augmented Lab) — though they share the same vertical position, reflecting the different durations.</p>
+
+<p>The graph is removed on mobile due to space constraints. The output factor still appears between sections.</p>
+
+<h2>7. Progress Trackers</h2>
+
+<p>At the bottom of each panel (or section on mobile), the progress tracker shows categorized research activity as filled cells. There are five rows:</p>
+
+<table class="info-table">
+  <tr><th>Row</th><th>Color</th><th>Meaning</th></tr>
+  <tr><td>Publication draft</td><td style="color:#39d353">Green</td><td>Completed research directions that could become publications — the rarest, highest-value events</td></tr>
+  <tr><td>Derivation</td><td style="color:#bc8cff">Purple</td><td>Mathematical derivations or proofs — core research progress</td></tr>
+  <tr><td>Numerical result</td><td style="color:#58a6ff">Blue</td><td>Computational or experimental results generated</td></tr>
+  <tr><td>Consistency check</td><td style="color:#d29922">Orange</td><td>Validation, debugging, and cross-checking of results — includes hallucination checking overhead</td></tr>
+  <tr><td>Dead end</td><td style="color:#f85149">Red</td><td>Abandoned research directions (approximately 33% of directions fail, per Open Science Collaboration 2015)</td></tr>
+</table>
+
+<p>Each cell represents a logged event. When a row's bar fills, it wraps and clears — the number of wraps is included in the total count. The trackers for both labs can be compared side by side (or top/bottom on mobile) to see the difference in activity composition.</p>
+
+<div class="note">
+  <strong>Note:</strong> The Augmented Lab's tracker shows more activity overall (reflecting the ~1.5x output factor) and relatively more consistency checks (orange) because AI hallucination checking adds overhead. It may also show slightly more dead ends due to AI-generated incorrect results that must be caught and discarded.
+</div>
+
+<h2>8. The Info Button</h2>
+
+<p>Click the <span style="display:inline-block; width:24px; height:24px; border:1px solid #39d353; border-radius:6px; text-align:center; color:#39d353; font-weight:bold; line-height:22px; font-size:14px;">i</span> button in the top-right corner to open a slide-in panel with:</p>
+<ul>
+  <li>The mathematical model summary</li>
+  <li>Key empirical findings from published studies</li>
+  <li>Per-task speedup values and their sources</li>
+  <li>A link to the full Mathematical Model page</li>
+</ul>
+
+<h2>9. Running the Simulation</h2>
+
+<p>The animation runs automatically on page load. Each run is stochastic — randomness in event timing means no two runs look identical, just like real research labs.</p>
+
+<p>The simulation completes in about 2 minutes of real time. To restart, simply refresh the page.</p>
+
+<h2>10. Related Pages</h2>
+
+<ul>
+  <li><a href="model-explanation.html">Mathematical Model →</a> — Full equations, derivations, and data sources</li>
+  <li><a href="animation.html">Animation →</a> — The interactive simulation itself</li>
+</ul>
+
+</body>
+</html>

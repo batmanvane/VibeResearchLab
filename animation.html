@@ -104,15 +104,15 @@
 <button id="infoBtn" title="Model Explanation">i</button>
 <div id="infoPanel">
   <div class="info-header">
-    <h2>About This Model</h2>
+    <h2>About</h2>
     <button id="closeInfo">&times;</button>
   </div>
   <div class="info-content">
     <h3>Mathematical Model</h3>
-    <p>The simulation uses a rigorous, empirically-grounded model. Output emerges from per-task speedups (not global multipliers), skill-biased effectiveness, and validation overhead.</p>
-    <p class="info-footer">See <a href="model-explanation.html" target="_blank">Mathematical Model →</a> for full derivations.</p></p>
+    <p>The simulation uses a empirically-grounded model. Output emerges from per-task speedups (not global multipliers), skill-biased effectiveness, and validation overhead.</p>
+    <p class="info-footer">See <a href="model-explanation.html" target="_blank">Mathematical Model →</a> and <a href="animation-guide.html" target="_blank">Animation Guide →</a></p>
 
-    <h3>The Productivity Multiplier Myth</h3>
+    <h3>Productivity Multiplier a Myth?</h3>
     <p>Vendor studies claim 10x-55x speedup from AI. But independent research tells a different story:</p>
     <table>
       <tr><th>Study</th><th>Finding</th><th>Confidence</th></tr>
@@ -135,7 +135,7 @@
     <p>AI helps <strong>junior researchers</strong> far more than senior ones. Low-skilled researchers get full speedup; experienced researchers see ~0% gain.</p>
 
     <h3>Expected Output</h3>
-    <p>Instead of 3-5x, the model produces <strong>~1.5x</strong> output factor — more honest, grounded in rigorous studies.</p>
+    <p>Instead of 3-5x, the model produces <strong>~1.5x</strong> output factor — more honest, grounded in published studies.</p>
 
     <h3>Data Sources</h3>
     <ul>
@@ -300,7 +300,7 @@ function roundRect(ctx, x, y, w, h, r) {
   // See technical-documentation.md for full model explanation.
   //
   // Key insight: AI productivity is TASK-SPECIFIC and SKILL-BIASED.
-  // The 10x claims are vendor hype; rigorous studies show modest gains
+  // The 10x claims are vendor hype; published studies show modest gains
   // for routine tasks, near-zero for complex problem-solving.
   //
   // Animation: 90s ≈ 2 years real time
@@ -1312,7 +1312,7 @@ function drawUI(now) {
       // Desktop: side-by-side layout
 
       // Output factor between the two (center, at top)
-      // Expected output factor ~1.5x (not 3-5x) per rigorous studies
+      // Expected output factor ~1.5x (not 3-5x) per published studies
       if (textAlpha > 0.3) {
         ctx.globalAlpha = 1;
         ctx.font = '700 14px "Courier New", monospace';
