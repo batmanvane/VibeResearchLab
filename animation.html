@@ -110,8 +110,7 @@
   <div class="info-content">
     <h3>Mathematical Model</h3>
     <p>The simulation uses a rigorous, empirically-grounded model. Output emerges from per-task speedups (not global multipliers), skill-biased effectiveness, and validation overhead.</p>
-    <p class="info-footer">See <a href="model-explanation.html" target="_blank">Mathematical Model →</a> for full derivations.</p>
-    <p class="info-footer">Built by <a href="https://github.com/batmanvane/VibeResearchLab" target="_blank">Robert Flassig</a> · March 2026</p>
+    <p class="info-footer">See <a href="model-explanation.html" target="_blank">Mathematical Model →</a> for full derivations.</p></p>
 
     <h3>The Productivity Multiplier Myth</h3>
     <p>Vendor studies claim 10x-55x speedup from AI. But independent research tells a different story:</p>
@@ -1279,6 +1278,15 @@ function drawUI(now) {
     ctx.globalAlpha = textAlpha;
     drawTracker(trackerLeft, midX / 2, trackerBaseY);
     drawTracker(trackerRight, midX + midX / 2, trackerBaseY);
+
+    // Credit line at bottom
+    if (textAlpha > 0.5) {
+      ctx.globalAlpha = 0.6;
+      ctx.font = '400 10px "Helvetica Neue", Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = SUBTLE;
+      ctx.fillText('Built by Robert Flassig · March 2026', midX, h - 4);
+    }
 
     ctx.textAlign = 'center';
     ctx.globalAlpha = 1;
