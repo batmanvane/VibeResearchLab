@@ -32,7 +32,9 @@ The model predicts approximately **1.5x** productivity gain from AI augmentation
 
 ## Running
 
-Simply open `animation.html` in a web browser. No server required.
+Open the animation directly in your browser, or visit the live version:
+
+**Live Demo**: https://batmanvane.github.io/VibeResearchLab/animation.html
 
 ## Mathematical Model
 
