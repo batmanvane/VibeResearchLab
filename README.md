@@ -64,6 +64,5 @@ MIT License — See LICENSE file.
 
 ## Acknowledgments
 
-- Mathematical model developed with assistance from Claude (Anthropic)
 - Visualization built with vanilla HTML5 Canvas
 - Grounded in published research from METR, Peng et al., Noy & Zhang, and Open Science Collaboration
