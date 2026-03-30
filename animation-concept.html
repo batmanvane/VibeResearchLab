@@ -6,17 +6,17 @@
   <title>Animation Concept: Traditional vs Augmented Lab</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0d1117; color: #c9d1d9; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 14px; line-height: 1.6; padding: 40px; max-width: 900px; margin: 0 auto; }
-    h1 { color: #e6edf3; font-size: 24px; margin-bottom: 8px; border-bottom: 1px solid #30363d; padding-bottom: 16px; }
-    h2 { color: #e6edf3; font-size: 18px; margin: 32px 0 16px 0; border-left: 3px solid #39d353; padding-left: 12px; }
-    h3 { color: #8b949e; font-size: 14px; margin: 24px 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
-    .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 32px; }
+    body { background: #05080f; color: #c9d1d9; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 14px; line-height: 1.6; padding: 40px; max-width: 900px; margin: 0 auto; }
+    h1 { color: #f0f4ff; font-size: 24px; margin-bottom: 8px; border-bottom: 1px solid #1a2233; padding-bottom: 16px; }
+    h2 { color: #f0f4ff; font-size: 18px; margin: 32px 0 16px 0; border-left: 3px solid #50ff88; padding-left: 12px; }
+    h3 { color: #6b7a8d; font-size: 14px; margin: 24px 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+    .subtitle { color: #6b7a8d; font-size: 14px; margin-bottom: 32px; }
     p { margin: 12px 0; }
-    a { color: #58a6ff; text-decoration: none; }
+    a { color: #3dacff; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .key-finding { background: #0e4429; border: 1px solid #26a641; border-radius: 6px; padding: 16px; margin: 20px 0; }
-    .key-finding h4 { color: #39d353; margin-bottom: 8px; }
-    .note { background: #1c2128; border-left: 3px solid #f0883e; padding: 12px 16px; margin: 16px 0; font-size: 13px; }
+    .key-finding { background: #0a2e15; border: 1px solid #2eeb62; border-radius: 6px; padding: 16px; margin: 20px 0; }
+    .key-finding h4 { color: #50ff88; margin-bottom: 8px; }
+    .note { background: #0c1018; border-left: 3px solid #ffaa22; padding: 12px 16px; margin: 16px 0; font-size: 13px; }
 
     /* Node depictions */
     .node-grid {
@@ -37,44 +37,44 @@
       border-radius: 50%;
       flex-shrink: 0;
     }
-    .node-dot.white { background: #e6edf3; box-shadow: 0 0 6px #e6edf3; }
-    .node-dot.cyan   { background: #58a6ff; }
-    .node-dot.pink   { background: #f472b6; }
-    .node-dot.yellow { background: #facc15; }
-    .node-dot.green  { background: #39d353; }
-    .node-dot.purple { background: #bc8cff; }
-    .node-dot.orange { background: #d29922; }
-    .node-dot.red    { background: #f85149; }
+    .node-dot.white { background: #f0f4ff; box-shadow: 0 0 6px #f0f4ff; }
+    .node-dot.cyan   { background: #00f5d4; }
+    .node-dot.pink   { background: #ff5caa; }
+    .node-dot.yellow { background: #ffe140; }
+    .node-dot.green  { background: #50ff88; }
+    .node-dot.purple { background: #c777ff; }
+    .node-dot.orange { background: #ffaa22; }
+    .node-dot.red    { background: #ff3b4a; }
     .node-dot.transparent {
       background: transparent;
-      border: 1px dashed #30363d;
+      border: 1px dashed #1a2233;
       box-shadow: none;
     }
     .node-dot.in-progress {
-      background: rgba(48, 54, 61, 0.5);
-      border: 1px dashed #8b949e;
+      background: rgba(26, 34, 51, 0.5);
+      border: 1px dashed #6b7a8d;
     }
     .node-dot.dead-aura {
-      background: #f85149;
-      box-shadow: 0 0 10px rgba(248, 81, 73, 0.5);
+      background: #ff3b4a;
+      box-shadow: 0 0 10px rgba(255, 59, 74, 0.5);
     }
     .node-dot.dead-core {
       width: 18px;
       height: 18px;
-      background: #0d1117;
-      border: 1px solid #f85149;
+      background: #05080f;
+      border: 1px solid #ff3b4a;
     }
     .node-dot.pub-aura {
-      background: #39d353;
-      box-shadow: 0 0 12px rgba(57, 211, 83, 0.6);
+      background: #50ff88;
+      box-shadow: 0 0 12px rgba(80, 255, 136, 0.6);
     }
     .node-dot.pub-core {
       width: 16px;
       height: 16px;
-      background: #0d1117;
-      border: 2px solid #39d353;
+      background: #05080f;
+      border: 2px solid #50ff88;
     }
-    .node-info { font-size: 12px; color: #8b949e; }
+    .node-info { font-size: 12px; color: #6b7a8d; }
     .node-info strong { color: #c9d1d9; display: block; margin-bottom: 2px; }
 
     /* Tracker row depictions */
@@ -97,23 +97,23 @@
       width: 12px;
       height: 12px;
       border-radius: 2px;
-      background: #161b22;
+      background: #0a0e18;
     }
-    .tracker-cell.lit  { background: #39d353; }
-    .tracker-cell.pale  { background: rgba(57, 211, 83, 0.4); }
-    .tracker-cell.dark  { background: #0e4429; }
-    .tracker-cell.purple { background: #bc8cff; }
-    .tracker-cell.purple-pale { background: rgba(188, 140, 255, 0.4); }
-    .tracker-cell.purple-dark { background: #2a1a4e; }
-    .tracker-cell.blue   { background: #58a6ff; }
-    .tracker-cell.blue-pale { background: rgba(88, 166, 255, 0.4); }
-    .tracker-cell.blue-dark { background: #0c2d6b; }
-    .tracker-cell.orange { background: #d29922; }
-    .tracker-cell.orange-pale { background: rgba(210, 153, 34, 0.4); }
-    .tracker-cell.orange-dark { background: #3b2508; }
-    .tracker-cell.red    { background: #f85149; }
-    .tracker-cell.red-pale { background: rgba(248, 81, 73, 0.4); }
-    .tracker-cell.red-dark { background: #3d1214; }
+    .tracker-cell.lit  { background: #50ff88; }
+    .tracker-cell.pale  { background: rgba(80, 255, 136, 0.4); }
+    .tracker-cell.dark  { background: #0a2e15; }
+    .tracker-cell.purple { background: #c777ff; }
+    .tracker-cell.purple-pale { background: rgba(199, 119, 255, 0.4); }
+    .tracker-cell.purple-dark { background: #2d1252; }
+    .tracker-cell.blue   { background: #3dacff; }
+    .tracker-cell.blue-pale { background: rgba(61, 172, 255, 0.4); }
+    .tracker-cell.blue-dark { background: #0a2450; }
+    .tracker-cell.orange { background: #ffaa22; }
+    .tracker-cell.orange-pale { background: rgba(255, 170, 34, 0.4); }
+    .tracker-cell.orange-dark { background: #3a2008; }
+    .tracker-cell.red    { background: #ff3b4a; }
+    .tracker-cell.red-pale { background: rgba(255, 59, 74, 0.4); }
+    .tracker-cell.red-dark { background: #3a0a10; }
     .tracker-label {
       font-size: 12px;
       color: #c9d1d9;
@@ -121,19 +121,19 @@
     }
     .tracker-intensity {
       font-size: 11px;
-      color: #8b949e;
+      color: #6b7a8d;
       font-family: 'Courier New', monospace;
     }
 
     .modeling-box {
-      background: #1c2128;
-      border: 1px solid #30363d;
+      background: #0c1018;
+      border: 1px solid #1a2233;
       border-radius: 6px;
       padding: 16px;
       margin: 20px 0;
     }
     .modeling-box h4 {
-      color: #e6edf3;
+      color: #f0f4ff;
       font-size: 14px;
       margin-bottom: 10px;
     }
@@ -160,7 +160,7 @@
 
 <h2>2. The Animation Concept Inspired by Petri Nets</h2>
 
-<div class="modeling-box" style="border-left-color:#58a6ff;">
+<div class="modeling-box" style="border-left-color:#3dacff;">
   <h4>Stochastic Petri Net</h4>
   <p>A formalism for modeling distributed, concurrent processes with probabilistic outcomes:</p>
   <ul>
@@ -270,7 +270,7 @@
 
 <ul>
   <li>The number scales based on the current productivity ratio</li>
-  <li>It turns <strong style="color:#39d353">green</strong> only when the ratio exceeds <strong>1.5x</strong> — avoiding the false impression that small gains are significant</li>
+  <li>It turns <strong style="color:#50ff88">green</strong> only when the ratio exceeds <strong>1.5x</strong> — avoiding the false impression that small gains are significant</li>
   <li>On mobile it is displayed larger for visibility in the stacked layout</li>
 </ul>
 
@@ -298,7 +298,7 @@
 
 <div class="tracker-grid">
   <div class="tracker-row">
-    <div class="tracker-label" style="color:#39d353;">Publication draft</div>
+    <div class="tracker-label" style="color:#50ff88;">Publication draft</div>
     <div class="tracker-cells">
       <div class="tracker-cell lit"></div><div class="tracker-cell pale"></div><div class="tracker-cell dark"></div>
       <div class="tracker-cell lit"></div><div class="tracker-cell dark"></div>
@@ -308,7 +308,7 @@
     <div class="tracker-intensity">highest value · rarest events</div>
   </div>
   <div class="tracker-row">
-    <div class="tracker-label" style="color:#bc8cff;">Derivation</div>
+    <div class="tracker-label" style="color:#c777ff;">Derivation</div>
     <div class="tracker-cells">
       <div class="tracker-cell purple"></div><div class="tracker-cell purple-pale"></div><div class="tracker-cell purple-dark"></div>
       <div class="tracker-cell purple"></div><div class="tracker-cell purple"></div><div class="tracker-cell purple-dark"></div>
@@ -318,7 +318,7 @@
     <div class="tracker-intensity">mathematical progress · proofs</div>
   </div>
   <div class="tracker-row">
-    <div class="tracker-label" style="color:#58a6ff;">Numerical result</div>
+    <div class="tracker-label" style="color:#3dacff;">Numerical result</div>
     <div class="tracker-cells">
       <div class="tracker-cell blue"></div><div class="tracker-cell blue"></div><div class="tracker-cell blue-dark"></div>
       <div class="tracker-cell blue-pale"></div><div class="tracker-cell blue"></div><div class="tracker-cell blue"></div>
@@ -328,7 +328,7 @@
     <div class="tracker-intensity">computational / experimental results</div>
   </div>
   <div class="tracker-row">
-    <div class="tracker-label" style="color:#d29922;">Consistency check</div>
+    <div class="tracker-label" style="color:#ffaa22;">Consistency check</div>
     <div class="tracker-cells">
       <div class="tracker-cell orange"></div><div class="tracker-cell orange-dark"></div><div class="tracker-cell orange-pale"></div>
       <div class="tracker-cell orange"></div><div class="tracker-cell orange-dark"></div>
@@ -338,7 +338,7 @@
     <div class="tracker-intensity">validation · debugging · hallucination checks</div>
   </div>
   <div class="tracker-row">
-    <div class="tracker-label" style="color:#f85149;">Dead end</div>
+    <div class="tracker-label" style="color:#ff3b4a;">Dead end</div>
     <div class="tracker-cells">
       <div class="tracker-cell red"></div><div class="tracker-cell red-dark"></div><div class="tracker-cell red-pale"></div>
       <div class="tracker-cell red"></div><div class="tracker-cell red-dark"></div>

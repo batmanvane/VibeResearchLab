@@ -6,7 +6,7 @@
 <title>Traditional Lab vs Augmented Lab</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0d1117; font-family: 'Helvetica Neue', Arial, sans-serif; overflow-y: auto; }
+  body { background: #05080f; font-family: 'Helvetica Neue', Arial, sans-serif; overflow-y: auto; }
   #infoBtn {
     position: fixed;
     top: 16px;
@@ -14,17 +14,17 @@
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    border: 1px solid #39d353;
-    background: #0e4429;
-    color: #39d353;
+    border: 1px solid #50ff88;
+    background: #0a2e15;
+    color: #50ff88;
     font-size: 20px;
     font-weight: 700;
     cursor: pointer;
     z-index: 300;
     transition: all 0.2s ease;
-    box-shadow: 0 0 8px rgba(57, 211, 83, 0.3);
+    box-shadow: 0 0 8px rgba(80, 255, 136, 0.3);
   }
-  #infoBtn:hover { background: #26a641; color: #fff; border-color: #39d353; box-shadow: 0 0 12px rgba(57, 211, 83, 0.5); }
+  #infoBtn:hover { background: #2eeb62; color: #fff; border-color: #50ff88; box-shadow: 0 0 12px rgba(80, 255, 136, 0.5); }
   #infoPanel {
     display: none;
     position: fixed;
@@ -32,8 +32,8 @@
     right: 0;
     width: 420px;
     height: 100vh;
-    background: #0d1117;
-    border-left: 1px solid #30363d;
+    background: #05080f;
+    border-left: 1px solid #1a2233;
     z-index: 200;
     overflow-y: auto;
     font-size: 13px;
@@ -45,30 +45,30 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    border-bottom: 1px solid #30363d;
+    border-bottom: 1px solid #1a2233;
     position: sticky;
     top: 0;
-    background: #0d1117;
+    background: #05080f;
   }
-  .info-header h2 { color: #e6edf3; font-size: 18px; font-weight: 600; margin: 0; }
+  .info-header h2 { color: #f0f4ff; font-size: 18px; font-weight: 600; margin: 0; }
   #closeInfo {
     background: none;
     border: none;
-    color: #8b949e;
+    color: #6b7a8d;
     font-size: 28px;
     cursor: pointer;
     line-height: 1;
     padding: 0 8px;
   }
-  #closeInfo:hover { color: #e6edf3; }
+  #closeInfo:hover { color: #f0f4ff; }
   .info-content { padding: 20px; color: #c9d1d9; }
   .info-content h3 {
-    color: #e6edf3;
+    color: #f0f4ff;
     font-size: 14px;
     font-weight: 600;
     margin: 20px 0 10px 0;
     padding-bottom: 6px;
-    border-bottom: 1px solid #21262d;
+    border-bottom: 1px solid #141c2a;
   }
   .info-content h3:first-child { margin-top: 0; }
   .info-content p { margin: 10px 0; }
@@ -81,26 +81,41 @@
   .info-content th, .info-content td {
     padding: 6px 8px;
     text-align: left;
-    border-bottom: 1px solid #21262d;
+    border-bottom: 1px solid #141c2a;
   }
-  .info-content th { color: #8b949e; font-weight: 500; }
+  .info-content th { color: #6b7a8d; font-weight: 500; }
   .info-content td { color: #c9d1d9; }
   .info-content ul { padding-left: 20px; margin: 10px 0; }
   .info-content li { margin: 4px 0; }
-  .info-content a { color: #58a6ff; text-decoration: none; font-weight: 600; }
+  .info-content a { color: #3dacff; text-decoration: none; font-weight: 600; }
   .info-content a:hover { text-decoration: underline; }
   .info-footer {
     margin-top: 12px;
     padding-top: 10px;
-    border-top: 1px solid #21262d;
+    border-top: 1px solid #141c2a;
     font-size: 11px;
-    color: #8b949e;
+    color: #6b7a8d;
   }
-  .info-footer a { color: #58a6ff; text-decoration: none; font-weight: 600; }
+  .info-footer a { color: #3dacff; text-decoration: none; font-weight: 600; }
+  #githubLink {
+    position: fixed;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #6b7a8d;
+    font-size: 10px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-decoration: none;
+    opacity: 0.7;
+    z-index: 100;
+    transition: opacity 0.2s ease;
+  }
+  #githubLink:hover { opacity: 1; color: #3dacff; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+<a id="githubLink" href="https://github.com/batmanvane/VibeResearchLab" target="_blank">Star on GitHub</a>
 <button id="infoBtn" title="Model Explanation">i</button>
 <div id="infoPanel">
   <div class="info-header">
@@ -130,7 +145,7 @@
 
     <h3>Data Sources</h3>
     <ul>
-      <li>METR — 0% speedup for experienced devs (independent study)</li>
+      <li><a href="https://arxiv.org/abs/2507.09089" target="_blank">METR 2025</a> — 0% speedup for experienced devs (independent RCT)</li>
       <li><a href="https://arxiv.org/abs/2302.06590" target="_blank">Peng et al. 2023 (GitHub Copilot)</a> — 55.8% on simple tasks</li>
       <li><a href="https://www.science.org/doi/10.1126/science.adh2586" target="_blank">Noy & Zhang 2023 (Science)</a> — +40% for below-median writers</li>
     </ul>
@@ -142,10 +157,13 @@
     <p>Vendor studies claim 10x-55x speedup from AI. But independent research tells a different story:</p>
     <table>
       <tr><th>Study</th><th>Finding</th><th>Confidence</th></tr>
-      <tr><td>METR 2024</td><td><strong>0%</strong> speedup for experienced devs</td><td>HIGH</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2507.09089" target="_blank">METR 2025</a></td><td><strong>0%</strong> speedup for experienced devs</td><td>HIGH</td></tr>
       <tr><td><a href="https://arxiv.org/abs/2302.06590" target="_blank">Peng et al. 2023</a></td><td>55.8% faster on <em>simple</em> tasks only</td><td>HIGH</td></tr>
       <tr><td>Noy & Zhang 2023</td><td>+40% for junior, <strong>~0%</strong> for skilled</td><td>HIGH</td></tr>
     </table>
+  </div>
+  <div class="info-footer">
+    <a href="https://github.com/batmanvane/VibeResearchLab" target="_blank">GitHub Repository</a>
   </div>
 </div>
 <script>
@@ -173,27 +191,27 @@ const H = () => window.innerHeight;
 const isMobile = () => W() < 768;
 
 // ============================================================
-// GITHUB COLORS
+// FLARE COLORS — high contrast, glassy, luminous
 // ============================================================
-const BG = '#0d1117';
-const BORDER = '#30363d';
-const SUBTLE = '#8b949e';
-const WHITE = '#e6edf3';
-const G = ['#0e4429','#006d32','#26a641','#39d353'];
-const RED = '#f85149';
-const ORANGE = '#d29922';
-const BLUE = '#58a6ff';
-const PURPLE = '#bc8cff';
+const BG = '#05080f';
+const BORDER = '#1a2233';
+const SUBTLE = '#6b7a8d';
+const WHITE = '#f0f4ff';
+const G = ['#0a3d1f','#00b341','#2eeb62','#50ff88'];
+const RED = '#ff3b4a';
+const ORANGE = '#ffaa22';
+const BLUE = '#3dacff';
+const PURPLE = '#c777ff';
 // ============================================================
 // 5-ROW PROGRESS TRACKER — theory+numerics research group
 // ============================================================
 const TRACK_CELLS = 40;
 const trackCategories = [
-  { label: 'Publication draft', color: G[3],   darkColor: '#0e4429' }, // rare, high-value
-  { label: 'Derivation',       color: PURPLE, darkColor: '#2a1a4e' },
-  { label: 'Numerical result', color: BLUE,   darkColor: '#0c2d6b' },
-  { label: 'Consistency check',color: ORANGE, darkColor: '#3b2508' },
-  { label: 'Dead end',         color: RED,    darkColor: '#3d1214' },
+  { label: 'Publication draft', color: G[3],   darkColor: '#0a2e15' }, // rare, high-value
+  { label: 'Derivation',       color: PURPLE, darkColor: '#2d1252' },
+  { label: 'Numerical result', color: BLUE,   darkColor: '#0a2450' },
+  { label: 'Consistency check',color: ORANGE, darkColor: '#3a2008' },
+  { label: 'Dead end',         color: RED,    darkColor: '#3a0a10' },
 ];
 const NUM_CATS = trackCategories.length;
 
@@ -259,7 +277,7 @@ function drawTracker(tracker, cx, baseY, mobile) {
     for (let i = 0; i < trackCells; i++) {
       const level = row.cells[i];
       if (level === 0) {
-        ctx.fillStyle = '#161b22';
+        ctx.fillStyle = '#0a0e18';
       } else {
         ctx.fillStyle = level === 1 ? cat.darkColor : level === 2 ? cat.color + '90' : cat.color;
       }
@@ -429,13 +447,13 @@ class ResearchModel {
     this.learningRatePerYear = isAugmented ? 0.20 : 0.15;
 
     // --- MAX RESEARCH DIRECTIONS (nodes) ---
-    // Traditional: ~30 directions, Augmented: ~55 (not 85)
-    // More conservative: 1.8x not 2.8x, consistent with METR
-    this.maxNodes = isAugmented ? 55 : 30;
+    // Traditional: ~80 directions, Augmented: ~140
+    // ~1.75x ratio, consistent with METR; high enough to grow through full 90s
+    this.maxNodes = isAugmented ? 140 : 80;
 
     // --- TRAVELLER DENSITY ---
     // Augmented: more parallel threads but less dramatic increase
-    this.maxTravellers = isAugmented ? 40 : 25;
+    this.maxTravellers = isAugmented ? 60 : 40;
 
     // --- ARC GROW SPEED ---
     // Augmented: faster but not 3x+ — more conservative
@@ -471,10 +489,10 @@ class ResearchModel {
   // Node spawn interval at given elapsed time
   // Uses effective speedup from task completion, not global multiplier
   spawnInterval(nodeCount, elapsedSec) {
-    const base = 0.77; // base interval for 1 direction per 2 weeks
+    const base = 0.62; // base interval — tuned so networks grow through full 90s
     const eff = this.efficiencyAt(elapsedSec);
     // Slow down as network grows (coordination overhead)
-    const crowdFactor = nodeCount < 6 ? 0.65 : nodeCount < 20 ? 0.85 : 1.0;
+    const crowdFactor = nodeCount < 6 ? 0.65 : nodeCount < 20 ? 0.85 : nodeCount < 50 ? 1.0 : 1.1;
     // Use average task speedup for idea generation
     const avgSpeedup = this.isAugmented ? 1.35 : 1.0;
     return (base * crowdFactor) / (avgSpeedup * eff);
@@ -839,7 +857,7 @@ for (let i = 0; i < 300; i++) {
     x: Math.random(), y: Math.random(),
     size: 0.5 + Math.random() * 1.2,
     alpha: 0.1 + Math.random() * 0.3,
-    color: [SUBTLE, G[0], G[1], '#1a1e24'][Math.floor(Math.random() * 4)],
+    color: [SUBTLE, G[0], G[1], '#0c1018'][Math.floor(Math.random() * 4)],
   });
 }
 
@@ -858,12 +876,12 @@ function drawStars() {
 // PHD FIGURES
 // ============================================================
 // PhD colors are DISTINCT from the 5 tracker category colors:
-//   Tracker: green (#39d353), red (#f85149), blue (#58a6ff), orange (#d29922), purple (#bc8cff)
-//   PhDs:    cyan (#2dd4bf),  pink (#f472b6), yellow (#facc15)
+//   Tracker: green (#50ff88), red (#ff3b4a), blue (#3dacff), orange (#ffaa22), purple (#c777ff)
+//   PhDs:    cyan (#00f5d4),  pink (#ff5caa), yellow (#ffe140)
 const phdAngles = [0, 2.094, 4.189];
-const PHD_CYAN   = '#2dd4bf';
-const PHD_PINK   = '#f472b6';
-const PHD_YELLOW = '#facc15';
+const PHD_CYAN   = '#00f5d4';
+const PHD_PINK   = '#ff5caa';
+const PHD_YELLOW = '#ffe140';
 const phdColors = [PHD_CYAN, PHD_PINK, PHD_YELLOW];
 const phdLabels = ['PhD 1', 'PhD 2', 'PhD 3'];
 
@@ -1010,7 +1028,7 @@ function drawProductivityGraph(midX, h, outputRatio, elapsed) {
   // The line grows upward from bottom as elapsed increases
 
   // Background strip
-  ctx.fillStyle = '#161b22';
+  ctx.fillStyle = '#0a0e18';
   ctx.globalAlpha = 0.5;
   ctx.fillRect(gLeft, graphTop, graphW, graphH);
   ctx.globalAlpha = 1;
@@ -1222,7 +1240,7 @@ function drawUI(now) {
     const barW = mobile ? 50 : 80;
     const barH = 3;
     const barX = cx - barW / 2;
-    ctx.fillStyle = '#161b22';
+    ctx.fillStyle = '#0a0e18';
     ctx.fillRect(barX, barY, barW, barH);
     const frac = Math.min(total / maxEvents, 1);
     ctx.fillStyle = color;
@@ -1313,14 +1331,6 @@ function drawUI(now) {
       ctx.globalAlpha = textAlpha;
       drawTracker(trackerRight, sectionCX, bottomTrackerBaseY, true);
 
-      // Credit line at very bottom
-      if (textAlpha > 0.5) {
-        ctx.globalAlpha = 0.6;
-        ctx.font = '400 10px "Helvetica Neue", Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = SUBTLE;
-        ctx.fillText('Built by Robert Flassig · March 2026', sectionCX, sectionH * 2 - 4);
-      }
 
     } else {
       // Desktop: side-by-side layout
@@ -1383,14 +1393,6 @@ function drawUI(now) {
       drawTracker(trackerLeft, midX / 2, trackerBaseY, false);
       drawTracker(trackerRight, midX + midX / 2, trackerBaseY, false);
 
-      // Credit line at bottom
-      if (textAlpha > 0.5) {
-        ctx.globalAlpha = 0.6;
-        ctx.font = '400 10px "Helvetica Neue", Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = SUBTLE;
-        ctx.fillText('Built by Robert Flassig · March 2026', midX, h - 4);
-      }
     }
 
     ctx.textAlign = 'center';

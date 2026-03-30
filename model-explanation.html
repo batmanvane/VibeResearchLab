@@ -9,24 +9,24 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0d1117; color: #c9d1d9; font-family: 'SF Mono', monospace; font-size: 14px; line-height: 1.6; padding: 40px; max-width: 900px; margin: 0 auto; }
-    h1 { color: #e6edf3; font-size: 24px; margin-bottom: 8px; border-bottom: 1px solid #30363d; padding-bottom: 16px; }
-    h2 { color: #e6edf3; font-size: 18px; margin: 32px 0 16px 0; border-left: 3px solid #39d353; padding-left: 12px; }
-    h3 { color: #8b949e; font-size: 14px; margin: 24px 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
-    .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 32px; }
-    .equation { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px 20px; margin: 12px 0; font-size: 16px; color: #e6edf3; overflow-x: auto; }
+    body { background: #05080f; color: #c9d1d9; font-family: 'SF Mono', monospace; font-size: 14px; line-height: 1.6; padding: 40px; max-width: 900px; margin: 0 auto; }
+    h1 { color: #f0f4ff; font-size: 24px; margin-bottom: 8px; border-bottom: 1px solid #1a2233; padding-bottom: 16px; }
+    h2 { color: #f0f4ff; font-size: 18px; margin: 32px 0 16px 0; border-left: 3px solid #50ff88; padding-left: 12px; }
+    h3 { color: #6b7a8d; font-size: 14px; margin: 24px 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+    .subtitle { color: #6b7a8d; font-size: 14px; margin-bottom: 32px; }
+    .equation { background: #0a0e18; border: 1px solid #1a2233; border-radius: 6px; padding: 16px 20px; margin: 12px 0; font-size: 16px; color: #f0f4ff; overflow-x: auto; }
     .parameter-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
-    .parameter-table th, .parameter-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #21262d; }
-    .parameter-table th { color: #8b949e; font-weight: 500; }
-    .parameter-table td:first-child { color: #79c0ff; font-family: monospace; }
-    .highlight { color: #39d353; font-weight: 600; }
-    .warning { color: #f0883e; }
-    .critical { color: #f85149; }
-    a { color: #58a6ff; text-decoration: none; }
+    .parameter-table th, .parameter-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #141c2a; }
+    .parameter-table th { color: #6b7a8d; font-weight: 500; }
+    .parameter-table td:first-child { color: #3dacff; font-family: monospace; }
+    .highlight { color: #50ff88; font-weight: 600; }
+    .warning { color: #ffaa22; }
+    .critical { color: #ff3b4a; }
+    a { color: #3dacff; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .note { background: #1c2128; border-left: 3px solid #f0883e; padding: 12px 16px; margin: 16px 0; font-size: 13px; }
-    .key-finding { background: #0e4429; border: 1px solid #26a641; border-radius: 6px; padding: 16px; margin: 20px 0; }
-    .key-finding h4 { color: #39d353; margin-bottom: 8px; }
+    .note { background: #0c1018; border-left: 3px solid #ffaa22; padding: 12px 16px; margin: 16px 0; font-size: 13px; }
+    .key-finding { background: #0a2e15; border: 1px solid #2eeb62; border-radius: 6px; padding: 16px; margin: 20px 0; }
+    .key-finding h4 { color: #50ff88; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -199,6 +199,23 @@
 <h2>11. Conclusion</h2>
 
 <p>The mathematical model predicts <strong>~1.5x</strong> output factor, not 3-5x. This emerges from task-specific speedups, skill bias, and validation overhead — consistent with METR's finding of 0% gain for experienced developers.</p>
+
+<h2>12. Disclaimer</h2>
+
+<div class="note">
+  <strong>This is not a rigorous study.</strong> The model is a structured estimate, not a peer-reviewed result. Key limitations and what a rigorous version would require:
+  <ul style="margin-top: 8px;">
+    <li><strong>Monte Carlo sensitivity analysis</strong> on all model parameters — sampling from plausible distributions rather than using point estimates</li>
+    <li><strong>Confidence intervals</strong> on the output ratio R(T), not just a single expected value</li>
+    <li><strong>Parameter calibration</strong> against real-world lab data (publication rates, time allocation, dead-end frequency)</li>
+    <li><strong>Cross-validation</strong> with additional independent studies beyond METR, Peng et al., and Noy & Zhang</li>
+    <li><strong>Domain specificity</strong> — speedups likely vary across fields (physics vs. biology vs. CS); the model assumes a generic research lab</li>
+    <li><strong>Temporal dynamics</strong> — AI capabilities and researcher adaptation change over time; current data reflects a snapshot</li>
+    <li><strong>Uncertainty analysis on speedup values</strong> — the per-task speedups (1.55x, 1.40x, 1.30x, etc.) are point estimates from individual studies with limited sample sizes; proper error propagation through the model is missing</li>
+    <li><strong>Task-specific parameterization</strong> — different research tasks (derivation, coding, writing, validation) have distinct learning curves, skill distributions, and overhead profiles that are currently collapsed into shared parameters</li>
+    <li><strong>Interaction effects</strong> between parameters (e.g., skill level × task type) are modeled simplistically</li>
+  </ul>
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
