@@ -28,13 +28,25 @@ The model predicts approximately **1.5x** productivity gain from AI augmentation
 - `animation.html` — Interactive visualization
 - `animation-concept.html` — Concept and guide explaining what the animation shows and how to read it
 - `model-explanation.html` — Mathematical model with LaTeX equations
-- `linkedin-post.md` — Source LinkedIn post
+- `capture.js` — Puppeteer script to record animation as MP4
+- `animation.mp4` — Pre-rendered video of the animation
 
 ## Running
 
 Open the animation directly in your browser, or visit the live version:
 
 **Live Demo**: https://batmanvane.github.io/VibeResearchLab/animation.html
+
+### Generating the video
+
+Requires Node.js, Puppeteer, and ffmpeg:
+
+```bash
+npm install
+node capture.js
+```
+
+This captures 1440 frames at 16 fps (90 seconds) and encodes them to `animation.mp4`.
 
 ## Mathematical Model
 
